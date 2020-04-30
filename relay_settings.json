@@ -2,7 +2,7 @@
   "tags": [
     "default"
   ],
-  "name": "Template",
+  "name": "Farsight DNSDB",
   "record": "relay-module.module/RelayModule+Custom+CS",
   "config": {
     "url": "${URL}",
