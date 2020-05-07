@@ -46,11 +46,14 @@ class UnexpectedFarsightResponseError(TRFormattedError):
         """
         status_code_map = {
             HTTPStatus.BAD_REQUEST: INVALID_ARGUMENT,
-            HTTPStatus.UNAUTHORIZED: UNAUTHORIZED,  # ToDo: "block quota is expired"
+            # ToDo: "block quota is expired"
+            HTTPStatus.UNAUTHORIZED: UNAUTHORIZED,
             HTTPStatus.FORBIDDEN: PERMISSION_DENIED,
-            HTTPStatus.NOT_FOUND: NOT_FOUND,  # ToDo: "no records found for the given lookup"
+            # ToDo: "no records found for the given lookup"
+            HTTPStatus.NOT_FOUND: NOT_FOUND,
             HTTPStatus.REQUESTED_RANGE_NOT_SATISFIABLE: INVALID_ARGUMENT,
-            HTTPStatus.TOO_MANY_REQUESTS: TOO_MANY_REQUESTS,  # ToDo: "daily quota limit is exceeded"
+            # ToDo: "daily quota limit is exceeded"
+            HTTPStatus.TOO_MANY_REQUESTS: TOO_MANY_REQUESTS,
             HTTPStatus.INTERNAL_SERVER_ERROR: UNKNOWN,
             HTTPStatus.SERVICE_UNAVAILABLE: UNKNOWN,
         }

@@ -15,7 +15,9 @@ def health():
                'User-Agent': current_app.config['USER_AGENT'],
                'X-API-Key': key}
 
-    url = f"{current_app.config['API_URL']}/summarize/rrset/name/www.farsightsecurity.com?limit=1"
+    url = (f"{current_app.config['API_URL']}"
+           "/summarize/rrset/name/www.farsightsecurity.com?limit=1")
+
     response = requests.get(url, headers=headers)
 
     if not response.ok:

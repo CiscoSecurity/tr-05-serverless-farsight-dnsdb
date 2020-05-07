@@ -18,8 +18,8 @@ def deliberate_observables():
 
 @enrich_api.route('/observe/observables', methods=['POST'])
 def observe_observables():
-    key = get_key()
-    observables = get_observables()
+    _ = get_key()
+    _ = get_observables()
     return jsonify_data({})
 
 

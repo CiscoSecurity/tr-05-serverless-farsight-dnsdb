@@ -33,7 +33,9 @@ def invalid_json():
 def test_enrich_call_with_valid_jwt_but_invalid_json_failure(
         route, client, valid_jwt, invalid_json, invalid_json_expected_payload,
 ):
-    response = client.post(route, headers=headers(valid_jwt), json=invalid_json)
+    response = client.post(
+        route, headers=headers(valid_jwt), json=invalid_json
+    )
 
     assert response.status_code == HTTPStatus.OK
     assert response.json == invalid_json_expected_payload
