@@ -1,8 +1,6 @@
-import requests
 from flask import Blueprint, current_app
 
 from api.client import FarsightClient
-from api.errors import UnexpectedFarsightResponseError
 from api.utils import jsonify_data, get_key
 
 health_api = Blueprint('health', __name__)

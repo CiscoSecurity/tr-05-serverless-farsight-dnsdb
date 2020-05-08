@@ -1,14 +1,10 @@
-import json
 from functools import partial
 
-import requests
 from flask import Blueprint, current_app
 
 from api.client import FarsightClient
-from api.errors import UnexpectedFarsightResponseError, \
-    UnsupportedObservableTypeError
 from api.schemas import ObservableSchema
-from api.utils import get_json, jsonify_data, get_key, join_url
+from api.utils import get_json, jsonify_data, get_key
 
 enrich_api = Blueprint('enrich', __name__)
 
@@ -39,6 +35,3 @@ def observe_observables():
         data += client.lookup(observable)
 
     return jsonify_data(data)
-
-
-
