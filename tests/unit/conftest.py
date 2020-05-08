@@ -3,6 +3,7 @@ from datetime import datetime
 from authlib.jose import jwt
 from pytest import fixture
 
+from api.errors import PERMISSION_DENIED, INVALID_ARGUMENT
 from app import app
 
 
@@ -53,3 +54,36 @@ def invalid_jwt(valid_jwt):
     payload = jwt_encode(payload)
 
     return '.'.join([header, payload, signature])
+
+
+@fixture(scope='module')
+def invalid_jwt_expected_payload(route):
+    if route in ('/observe/observables', '/health'):
+        return {
+            'errors': [
+                {'code': PERMISSION_DENIED,
+                 'message': 'Invalid Authorization Bearer JWT.',
+                 'type': 'fatal'}
+            ]
+        }
+
+    if route.endswith('/deliberate/observables'):
+        return {'data': {}}
+
+    if route.endswith('/refer/observables'):
+        return {'data': []}
+
+
+@fixture(scope='module')
+def invalid_json_expected_payload(route, client):
+    if route.endswith('/observe/observables'):
+        return {'errors': [
+            {'code': INVALID_ARGUMENT,
+             'message': "{0: {'value': ['Missing data for required field.']}}",
+             'type': 'fatal'}
+        ]}
+
+    if route.endswith('/deliberate/observables'):
+        return {'data': {}}
+
+    return {'data': []}
