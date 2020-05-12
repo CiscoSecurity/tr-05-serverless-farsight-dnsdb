@@ -3,6 +3,7 @@ from functools import partial
 from flask import Blueprint, current_app
 
 from api.client import FarsightClient
+from api.mappings import Mapping
 from api.schemas import ObservableSchema
 from api.utils import get_json, jsonify_data, get_key
 
@@ -30,8 +31,22 @@ def observe_observables():
     client = FarsightClient(current_app.config['API_URL'],
                             key,
                             current_app.config['USER_AGENT'])
-    data = []
-    for observable in observables:
-        data += client.lookup(observable)
+    data = {}
+    sightings = []
+
+    limit = 100  # ToDo
+
+    for x in observables:
+        mapping = Mapping.for_(x)
+
+        if mapping:
+            lookup_data = client.lookup(x)
+            sightings.extend(mapping.extract_sightings(lookup_data, limit))
+
+    def format_docs(docs):
+        return {'count': len(docs), 'docs': docs}
+
+    if sightings:
+        data['sightings'] = format_docs(sightings)
 
     return jsonify_data(data)
