@@ -52,3 +52,10 @@ def jsonify_data(data):
 
 def jsonify_errors(error):
     return jsonify({'errors': [error]})
+
+
+def join_url(base, *parts):
+    return '/'.join(
+        [base.rstrip('/')] +
+        [part.strip('/') for part in parts]
+    )
