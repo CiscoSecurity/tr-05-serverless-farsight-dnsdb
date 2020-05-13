@@ -3,12 +3,8 @@ from uuid import uuid4
 
 from api.utils import all_subclasses
 
-NONE = 'None'
-INFO = 'Info'
-LOW = 'Low'
-MEDIUM = 'Medium'
 HIGH = 'High'
-UNKNOWN = 'Unknown'
+
 CTIM_DEFAULTS = {
     'schema_version': '1.0.17',
 }
@@ -39,24 +35,28 @@ class Mapping(metaclass=ABCMeta):
             **CTIM_DEFAULTS,
             'id': f'transient:{uuid4()}',
             'type': 'sighting',
-            # ToDo: confirm
             'source': 'Farsight DNSDB',
             'title': 'Found in Farsight DNSDB',
             'confidence': HIGH,
-            'internal': True,
-            # ___________________
-            'source_uri': '',  # ToDO: find out
-
+            'internal': False,
             'count': record['count'],
             'observables': [self.observable],
             'observed_time': {
-                'start_time': record.get('time_first') or record.get('zone_time_first'),  # ToDo: confirm
-                'end_time':  record.get('time_last') or record.get('zone_time_last'),  # ToDo: confirm
+                'start_time':
+                    record.get('time_first') or record['zone_time_first'],
+                'end_time':
+                    record.get('time_last') or record['zone_time_last'],
             },
         }
 
     def extract_sightings(self, lookup_data, limit):
-        lookup_data.sort(key=lambda r: r.get('time_first') or r.get('zone_time_first'), reverse=True) # ToDo: confirm
+        # Search result may be missing either time_ or zone_time_ pair
+        # but at least one pair of timestamps will always be present.
+        lookup_data.sort(
+            key=lambda r: r.get('time_last') or r.get('zone_time_last'),
+            reverse=True
+        )
+
         lookup_data = lookup_data[:limit]
 
         return [self._sighting(r) for r in lookup_data]
@@ -76,12 +76,19 @@ class Domain(Mapping):
     def type(cls):
         return 'domain'
 
-    def resolved_to(self, ip):
+    RRTYPES = {
+        'A': 'ip',
+        'AAAA': 'ipv6',
+    }
+
+    def resolved_to(self, ip, rrtype):
         return self.observable_relation(
             'Resolved_To',
             source=self.observable,
-            related={'value': ip,
-                     'type': 'ipv6' if ':' in ip else 'ip'}
+            related={
+                'value': ip,
+                'type': self.RRTYPES[rrtype]
+            }
         )
 
     def _sighting(self, record):
@@ -90,13 +97,14 @@ class Domain(Mapping):
 
         if record['rdata']:
             result['relations'] = [
-                self.resolved_to(ip) for ip in record['rdata']
+                self.resolved_to(ip, record['rrtype'])
+                for ip in record['rdata']
             ]
 
         return result
 
     def extract_sightings(self, lookup_data, limit):
-        lookup_data = [r for r in lookup_data if r['rrtype'] in ('A', 'AAAA')]
+        lookup_data = [r for r in lookup_data if r['rrtype'] in self.RRTYPES]
         return super().extract_sightings(lookup_data, limit)
 
 

@@ -52,6 +52,3 @@ class FarsightClient:
 
     def lookup(self, observable, limit=None):
         return self._request_farsight(observable, 'lookup', limit)
-
-    def summarize(self, observable, limit=None):
-        return self._request_farsight(observable, 'summarize', limit)
