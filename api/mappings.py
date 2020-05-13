@@ -108,7 +108,7 @@ class IP(Mapping):
     def resolved_to(self, domain):
         return self.observable_relation(
             'Resolved_To',
-            source=domain,
+            source={'value': domain, 'type': 'domain'},
             related=self.observable
         )
 
