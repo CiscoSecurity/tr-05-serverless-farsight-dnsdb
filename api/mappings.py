@@ -55,7 +55,6 @@ class Mapping(metaclass=ABCMeta):
             },
         }
 
-
     def extract_sightings(self, lookup_data, limit):
         lookup_data.sort(key=lambda r: r.get('time_first') or r.get('zone_time_first'), reverse=True) # ToDo: confirm
         lookup_data = lookup_data[:limit]

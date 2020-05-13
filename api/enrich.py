@@ -34,7 +34,7 @@ def observe_observables():
     data = {}
     sightings = []
 
-    limit = 100  # ToDo
+    limit = current_app.config['CTR_ENTITIES_LIMIT']
 
     for x in observables:
         mapping = Mapping.for_(x)
