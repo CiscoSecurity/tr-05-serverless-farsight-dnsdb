@@ -54,6 +54,10 @@ def jsonify_errors(error):
     return jsonify({'errors': [error]})
 
 
+def format_docs(docs):
+    return {'count': len(docs), 'docs': docs}
+
+
 def join_url(base, *parts):
     return '/'.join(
         [base.rstrip('/')] +

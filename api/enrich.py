@@ -5,7 +5,7 @@ from flask import Blueprint, current_app
 from api.client import FarsightClient
 from api.mappings import Mapping
 from api.schemas import ObservableSchema
-from api.utils import get_json, jsonify_data, get_key
+from api.utils import get_json, jsonify_data, get_key, format_docs
 
 enrich_api = Blueprint('enrich', __name__)
 
@@ -42,9 +42,6 @@ def observe_observables():
         if mapping:
             lookup_data = client.lookup(x)
             sightings.extend(mapping.extract_sightings(lookup_data, limit))
-
-    def format_docs(docs):
-        return {'count': len(docs), 'docs': docs}
 
     if sightings:
         data['sightings'] = format_docs(sightings)
