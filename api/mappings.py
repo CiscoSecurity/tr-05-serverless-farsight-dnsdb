@@ -10,7 +10,7 @@ MEDIUM = 'Medium'
 HIGH = 'High'
 UNKNOWN = 'Unknown'
 CTIM_DEFAULTS = {
-    'schema_version': '1.0.16',
+    'schema_version': '1.0.17',
 }
 
 
