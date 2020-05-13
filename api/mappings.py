@@ -91,7 +91,13 @@ class Domain(Mapping):
 
     def _sighting(self, record):
         result = super()._sighting(record)
-        result['details'] = f'Bailiwick: {record["bailiwick"]}'
+
+        # SightingDataTable Object:
+        # https://github.com/threatgrid/ctim/blob/master/doc/structures/sighting.md#map3
+        result['data'] = {
+            'columns': [{'name': 'Bailiwick', 'type': 'string'}],
+            'rows': [[record["bailiwick"]]]
+        }
 
         if record['rdata']:
             result['relations'] = [
