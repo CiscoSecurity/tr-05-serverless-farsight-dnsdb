@@ -3,8 +3,6 @@ from uuid import uuid4
 
 from api.utils import all_subclasses
 
-HIGH = 'High'
-
 CTIM_DEFAULTS = {
     'schema_version': '1.0.17',
 }
@@ -37,7 +35,7 @@ class Mapping(metaclass=ABCMeta):
             'type': 'sighting',
             'source': 'Farsight DNSDB',
             'title': 'Found in Farsight DNSDB',
-            'confidence': HIGH,
+            'confidence': 'High',
             'internal': False,
             'count': record['count'],
             'observables': [self.observable],

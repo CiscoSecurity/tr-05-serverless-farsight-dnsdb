@@ -14,7 +14,9 @@ def health():
                             key,
                             current_app.config['USER_AGENT'])
 
-    _ = client.lookup({'value': 'www.farsightsecurity.com',
-                       'type': 'domain'}, limit=1)
+    _ = client.lookup(
+        {'value': 'www.farsightsecurity.com', 'type': 'domain'},
+        limit=1
+    )
 
     return jsonify_data({'status': 'ok'})
