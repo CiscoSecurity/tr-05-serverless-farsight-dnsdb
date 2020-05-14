@@ -7,6 +7,8 @@ CTIM_DEFAULTS = {
     'schema_version': '1.0.17',
 }
 
+RESOLVED_TO = 'Resolved_To'
+
 
 class Mapping(metaclass=ABCMeta):
 
@@ -81,7 +83,7 @@ class Domain(Mapping):
 
     def resolved_to(self, ip, rrtype):
         return self.observable_relation(
-            'Resolved_To',
+            RESOLVED_TO,
             source=self.observable,
             related={
                 'value': ip,
@@ -119,7 +121,7 @@ class IP(Mapping):
 
     def resolved_to(self, domain):
         return self.observable_relation(
-            'Resolved_To',
+            RESOLVED_TO,
             source={'value': domain, 'type': 'domain'},
             related=self.observable
         )
