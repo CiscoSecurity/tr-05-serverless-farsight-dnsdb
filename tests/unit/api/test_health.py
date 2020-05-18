@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from unittest.mock import patch
 
 from pytest import fixture
 
@@ -32,6 +33,10 @@ def test_health_call_with_invalid_jwt_failure(
     assert response.json == invalid_jwt_expected_payload
 
 
-def test_health_call_success(route, client, valid_jwt):
-    response = client.post(route, headers=headers(valid_jwt))
-    assert response.status_code == HTTPStatus.OK
+def test_health_call_success(route, client, valid_jwt, farsight_response_ok):
+    with patch('requests.get') as get_mock:
+        get_mock.return_value = farsight_response_ok
+        response = client.post(route, headers=headers(valid_jwt))
+
+        assert response.status_code == HTTPStatus.OK
+        assert response.json == {'data': {'status': 'ok'}}
