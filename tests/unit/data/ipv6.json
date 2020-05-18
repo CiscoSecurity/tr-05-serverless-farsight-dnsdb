@@ -1,0 +1,86 @@
+{
+    "input": [{
+      "count": 1,
+      "zone_time_first": "2019-12-01T23:47:00Z",
+      "zone_time_last": "2019-12-01T23:47:00Z",
+      "rrname": "dns2.tacnet.org.",
+      "rrtype": "AAAA",
+      "rdata": "2001:db8:85a3::8a2e:370:7334"
+    },
+    {
+      "count": 1,
+      "zone_time_first": "2019-12-01T23:47:00Z",
+      "zone_time_last": "2019-12-01T23:47:00Z",
+      "rrname": "dns3.tacnet.org.",
+      "rrtype": "AAAA",
+      "rdata": "2001:db8:85a3::8a2e:370:7334"
+    }],
+    "output": [
+  {
+    "schema_version": "1.0.17",
+    "type": "sighting",
+    "source": "Farsight DNSDB",
+    "title": "Found in Farsight DNSDB",
+    "confidence": "High",
+    "internal": false,
+    "count": 1,
+    "observables": [
+      {
+        "type": "ipv6",
+        "value": "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
+      }
+    ],
+    "observed_time": {
+      "start_time": "2019-12-01T23:47:00Z",
+      "end_time": "2019-12-01T23:47:00Z"
+    },
+    "relations": [
+      {
+        "origin": "Farsight DNSDB Enrichment Module",
+        "relation": "Resolved_To",
+        "source": {
+          "value": "dns2.tacnet.org.",
+          "type": "domain"
+        },
+        "related": {
+          "type": "ipv6",
+          "value": "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
+        }
+      }
+    ]
+  },
+  {
+    "schema_version": "1.0.17",
+    "type": "sighting",
+    "source": "Farsight DNSDB",
+    "title": "Found in Farsight DNSDB",
+    "confidence": "High",
+    "internal": false,
+    "count": 1,
+    "observables": [
+      {
+        "type": "ipv6",
+        "value": "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
+      }
+    ],
+    "observed_time": {
+      "start_time": "2019-12-01T23:47:00Z",
+      "end_time": "2019-12-01T23:47:00Z"
+    },
+    "relations": [
+      {
+        "origin": "Farsight DNSDB Enrichment Module",
+        "relation": "Resolved_To",
+        "source": {
+          "value": "dns3.tacnet.org.",
+          "type": "domain"
+        },
+        "related": {
+          "type": "ipv6",
+          "value": "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
+        }
+      }
+    ]
+  }
+]
+  }
