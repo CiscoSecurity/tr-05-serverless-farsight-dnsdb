@@ -48,10 +48,7 @@ class FarsightClient:
         if not response.ok:
             raise UnexpectedFarsightResponseError(response)
 
-        return (json.loads(raw) for raw in response.iter_lines())
+        return [json.loads(raw) for raw in response.iter_lines()]
 
     def lookup(self, observable, limit=None):
         return self._request_farsight(observable, 'lookup', limit)
-
-    def summarize(self, observable, limit=None):
-        return self._request_farsight(observable, 'summarize', limit)
