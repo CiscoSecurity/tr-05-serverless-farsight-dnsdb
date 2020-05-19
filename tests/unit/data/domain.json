@@ -1,0 +1,215 @@
+{
+    "input": [
+      {
+        "count": 5,
+        "time_first": "2013-01-14T19:23:53Z",
+        "time_last": "2013-01-14T19:23:53Z",
+        "rrname": "google.com.",
+        "rrtype": "A",
+        "bailiwick": ".",
+        "rdata": [
+          "74.125.224.64",
+          "74.125.224.65"
+        ]
+      },
+      {
+        "count": 1979,
+        "zone_time_first": "2010-04-24T16:12:21Z",
+        "zone_time_last": "2010-12-31T17:09:16Z",
+        "rrname": "google.com.",
+        "rrtype": "A",
+        "bailiwick": "google.com.",
+        "rdata": [
+          "173.194.220.100",
+          "173.194.220.101"
+        ]
+      },
+      {"count": 252,
+        "zone_time_first": "2013-01-01T17:15:58Z",
+        "zone_time_last": "2013-12-31T17:12:26Z",
+        "rrname": "google.com.",
+        "rrtype": "NS",
+        "bailiwick": "com.",
+        "rdata": [
+          "ns1.google.com.",
+          "ns2.google.com."
+        ]
+      },
+      {
+        "count": 2,
+        "time_first": "2013-01-09T07:43:50Z",
+        "time_last": "2013-01-09T07:43:50Z",
+        "rrname": "google.com.",
+        "rrtype": "AAAA",
+        "bailiwick": ".",
+        "rdata": [
+          "2001:4860:4001:802::1008"
+        ]
+}
+
+    ],
+    "output": [
+  {
+    "schema_version": "1.0.17",
+    "type": "sighting",
+    "source": "Farsight DNSDB",
+    "title": "Found in Farsight DNSDB",
+    "confidence": "High",
+    "internal": false,
+    "count": 5,
+    "observables": [
+      {
+        "type": "domain",
+        "value": "google.com"
+      }
+    ],
+    "observed_time": {
+      "start_time": "2013-01-14T19:23:53Z",
+      "end_time": "2013-01-14T19:23:53Z"
+    },
+    "data": {
+      "columns": [
+        {
+          "name": "Bailiwick",
+          "type": "string"
+        }
+      ],
+      "rows": [
+        [
+          "."
+        ]
+      ]
+    },
+    "relations": [
+      {
+        "origin": "Farsight DNSDB Enrichment Module",
+        "relation": "Resolved_To",
+        "source": {
+          "type": "domain",
+          "value": "google.com"
+        },
+        "related": {
+          "value": "74.125.224.64",
+          "type": "ip"
+        }
+      },
+      {
+        "origin": "Farsight DNSDB Enrichment Module",
+        "relation": "Resolved_To",
+        "source": {
+          "type": "domain",
+          "value": "google.com"
+        },
+        "related": {
+          "value": "74.125.224.65",
+          "type": "ip"
+        }
+      }
+    ]
+  },
+  {
+    "schema_version": "1.0.17",
+    "type": "sighting",
+    "source": "Farsight DNSDB",
+    "title": "Found in Farsight DNSDB",
+    "confidence": "High",
+    "internal": false,
+    "count": 2,
+    "observables": [
+      {
+        "type": "domain",
+        "value": "google.com"
+      }
+    ],
+    "observed_time": {
+      "start_time": "2013-01-09T07:43:50Z",
+      "end_time": "2013-01-09T07:43:50Z"
+    },
+    "data": {
+      "columns": [
+        {
+          "name": "Bailiwick",
+          "type": "string"
+        }
+      ],
+      "rows": [
+        [
+          "."
+        ]
+      ]
+    },
+    "relations": [
+      {
+        "origin": "Farsight DNSDB Enrichment Module",
+        "relation": "Resolved_To",
+        "source": {
+          "type": "domain",
+          "value": "google.com"
+        },
+        "related": {
+          "value": "2001:4860:4001:802::1008",
+          "type": "ipv6"
+        }
+      }
+    ]
+  },
+  {
+    "schema_version": "1.0.17",
+    "type": "sighting",
+    "source": "Farsight DNSDB",
+    "title": "Found in Farsight DNSDB",
+    "confidence": "High",
+    "internal": false,
+    "count": 1979,
+    "observables": [
+      {
+        "type": "domain",
+        "value": "google.com"
+      }
+    ],
+    "observed_time": {
+      "start_time": "2010-04-24T16:12:21Z",
+      "end_time": "2010-12-31T17:09:16Z"
+    },
+    "data": {
+      "columns": [
+        {
+          "name": "Bailiwick",
+          "type": "string"
+        }
+      ],
+      "rows": [
+        [
+          "google.com."
+        ]
+      ]
+    },
+    "relations": [
+      {
+        "origin": "Farsight DNSDB Enrichment Module",
+        "relation": "Resolved_To",
+        "source": {
+          "type": "domain",
+          "value": "google.com"
+        },
+        "related": {
+          "value": "173.194.220.100",
+          "type": "ip"
+        }
+      },
+      {
+        "origin": "Farsight DNSDB Enrichment Module",
+        "relation": "Resolved_To",
+        "source": {
+          "type": "domain",
+          "value": "google.com"
+        },
+        "related": {
+          "value": "173.194.220.101",
+          "type": "ip"
+        }
+      }
+    ]
+  }
+]
+  }

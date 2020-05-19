@@ -1,4 +1,7 @@
+import json
 from datetime import datetime
+from http import HTTPStatus
+from unittest.mock import MagicMock
 
 from authlib.jose import jwt
 from pytest import fixture
@@ -21,6 +24,79 @@ def client(secret_key):
 
     with app.test_client() as client:
         yield client
+
+
+def farsight_api_response_mock(status_code, payload=None):
+    def iter_lines():
+        for r in payload:
+            yield r
+
+    mock_response = MagicMock()
+
+    mock_response.status = status_code
+    mock_response.ok = status_code == HTTPStatus.OK
+
+    payload = payload or []
+    payload = (json.dumps(r) for r in payload)
+
+    mock_response.iter_lines = iter_lines
+
+    return mock_response
+
+
+def farsight_api_error_mock(status_code, text=None):
+    mock_response = MagicMock()
+
+    mock_response.status_code = status_code
+    mock_response.ok = status_code == HTTPStatus.OK
+
+    mock_response.text = text
+
+    return mock_response
+
+
+@fixture(scope='session')
+def farsight_response_ok(secret_key):
+    return farsight_api_response_mock(
+            HTTPStatus.OK, payload=[
+                {
+                    "count": 4,
+                    "time_first": "2013-01-18T05:38:08Z",
+                    "time_last": "2013-01-22T23:17:10Z",
+                    "rrname": "google.com.",
+                    "rrtype": "A",
+                    "bailiwick": ".",
+                    "rdata": ["74.125.128.100", "74.125.128.101"]
+                }
+            ]
+        )
+
+
+@fixture(scope='session')
+def farsight_response_unauthorized_creds(secret_key):
+    return farsight_api_error_mock(
+        HTTPStatus.FORBIDDEN,
+        'Error: Bad API key'
+    )
+
+
+@fixture(scope='module')
+def unauthorized_creds_expected_payload(route):
+    if route in ('/observe/observables', '/health'):
+        return {
+            'errors': [
+                {'code': PERMISSION_DENIED,
+                 'message': ("Unexpected response from Farsight DNSDB: "
+                             "Error: Bad API key"),
+                 'type': 'fatal'}
+            ]
+        }
+
+    if route.endswith('/deliberate/observables'):
+        return {'data': {}}
+
+    if route.endswith('/refer/observables'):
+        return {'data': []}
 
 
 @fixture(scope='session')
