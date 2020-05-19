@@ -120,6 +120,8 @@ class IP(Mapping):
         return 'ip'
 
     def resolved_to(self, domain):
+        # Remove trailing dot for compatibility with TR
+        domain = domain.rstrip('.')
         return self.observable_relation(
             RESOLVED_TO,
             source={'value': domain, 'type': 'domain'},

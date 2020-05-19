@@ -3,7 +3,7 @@
       "count": 1,
       "zone_time_first": "2019-12-01T23:47:00Z",
       "zone_time_last": "2019-12-01T23:47:00Z",
-      "rrname": "dns2.tacnet.org.",
+      "rrname": "dns2.tacnet.org",
       "rrtype": "AAAA",
       "rdata": "2001:db8:85a3::8a2e:370:7334"
     },
@@ -11,7 +11,7 @@
       "count": 1,
       "zone_time_first": "2019-12-01T23:47:00Z",
       "zone_time_last": "2019-12-01T23:47:00Z",
-      "rrname": "dns3.tacnet.org.",
+      "rrname": "dns3.tacnet.org",
       "rrtype": "AAAA",
       "rdata": "2001:db8:85a3::8a2e:370:7334"
     }],
@@ -39,7 +39,7 @@
         "origin": "Farsight DNSDB Enrichment Module",
         "relation": "Resolved_To",
         "source": {
-          "value": "dns2.tacnet.org.",
+          "value": "dns2.tacnet.org",
           "type": "domain"
         },
         "related": {
@@ -72,7 +72,7 @@
         "origin": "Farsight DNSDB Enrichment Module",
         "relation": "Resolved_To",
         "source": {
-          "value": "dns3.tacnet.org.",
+          "value": "dns3.tacnet.org",
           "type": "domain"
         },
         "related": {
