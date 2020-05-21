@@ -4,6 +4,7 @@ from flask import Blueprint, current_app
 
 from api.client import FarsightClient
 from api.mappings import Mapping
+from api.mappings_aggr import Mapping as MappingAggr
 from api.schemas import ObservableSchema
 from api.utils import get_json, jsonify_data, get_key, format_docs
 
@@ -35,9 +36,10 @@ def observe_observables():
     sightings = []
 
     limit = current_app.config['CTR_ENTITIES_LIMIT']
+    aggr = current_app.config['AGGREGATE']
 
     for x in observables:
-        mapping = Mapping.for_(x)
+        mapping = (MappingAggr if aggr else Mapping).for_(x)
 
         if mapping:
             lookup_data = client.lookup(x)
