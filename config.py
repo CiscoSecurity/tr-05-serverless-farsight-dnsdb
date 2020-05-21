@@ -24,3 +24,5 @@ class Config:
 
     if CTR_ENTITIES_LIMIT > CTR_ENTITIES_LIMIT_MAX:
         CTR_ENTITIES_LIMIT = CTR_ENTITIES_LIMIT_MAX
+
+    AGGREGATE = str(os.environ.get('AGGREGATE')).lower() != 'false'
