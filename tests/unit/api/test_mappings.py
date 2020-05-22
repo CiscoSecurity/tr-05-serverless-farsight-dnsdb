@@ -29,10 +29,20 @@ def test_map(input_data):
         data = json.load(file)
 
         results = getattr(input_data.mapping, 'extract_sightings')(
-            data['input'], 100)
+            data['input'], 100, aggregate=False)
 
         for record in results:
             assert record.pop('id').startswith('transient:')
+
+        for i, r in enumerate(results):
+            for k, v in r['relations'][0].items():
+                if v != data['output'][i]['relations'][0][k]:
+                    print(v)
+                    print(data['output'][i]['relations'][0][k])
+                else:
+                    print('*')
+
+
         assert results == data['output']
 
 
@@ -42,7 +52,7 @@ def test_limit(input_data):
 
         for limit in (0, 1, 2, 25, 100):
             results = getattr(input_data.mapping, 'extract_sightings')(
-                data['input'], limit)
+                data['input'], limit, aggregate=False)
 
             assert len(results) <= limit
 
