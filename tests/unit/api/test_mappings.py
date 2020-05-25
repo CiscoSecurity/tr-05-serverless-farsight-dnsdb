@@ -1,5 +1,6 @@
 import json
 from collections import namedtuple
+from datetime import datetime
 
 from pytest import fixture
 
@@ -24,25 +25,31 @@ def input_data(request):
     return request.param
 
 
-def test_map(input_data):
+def aggregate_values():
+    yield True
+    yield False
+
+
+@fixture(scope='module', params=aggregate_values(), ids=lambda d: f'aggr={d}')
+def aggregate(request):
+    return request.param
+
+
+def test_map(input_data, aggregate):
     with open('tests/unit/data/' + input_data.file) as file:
         data = json.load(file)
 
         results = getattr(input_data.mapping, 'extract_sightings')(
-            data['input'], 100, aggregate=False)
+            data['input'], 100, aggregate=aggregate)
 
+        time = datetime.now().isoformat(timespec="minutes")
         for record in results:
             assert record.pop('id').startswith('transient:')
+            if aggregate:
+                assert record.pop('observed_time').pop('start_time'
+                                                       ).startswith(time)
 
-        for i, r in enumerate(results):
-            for k, v in r['relations'][0].items():
-                if v != data['output'][i]['relations'][0][k]:
-                    print(v)
-                    print(data['output'][i]['relations'][0][k])
-                else:
-                    print('*')
-
-        assert results == data['output']
+        assert results == data[f'output{"-aggregated" if aggregate else ""}']
 
 
 def test_limit(input_data):

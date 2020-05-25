@@ -103,7 +103,7 @@ class Mapping(metaclass=ABCMeta):
         return [{
             'count': count,
             'time_first': f'{datetime.now().isoformat(timespec="seconds")}Z',
-            'related': related
+            'related': sorted(related)
         }]
 
     @staticmethod

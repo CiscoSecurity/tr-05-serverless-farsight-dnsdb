@@ -82,5 +82,48 @@
       }
     ]
   }
-]
+],
+   "output-aggregated": [
+     {
+       "schema_version": "1.0.17",
+       "type": "sighting",
+       "source": "Farsight DNSDB",
+       "title": "Found in Farsight DNSDB",
+       "confidence": "High",
+       "internal": false,
+       "count": 2,
+       "observables": [
+         {
+           "type": "ipv6",
+           "value": "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
+         }
+       ],
+       "relations": [
+         {
+           "origin": "Farsight DNSDB Enrichment Module",
+           "relation": "Resolved_To",
+           "source": {
+             "value": "dns2.tacnet.org",
+             "type": "domain"
+           },
+          "related": {
+            "type": "ipv6",
+            "value": "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
+          }
+          },
+             {
+            "origin": "Farsight DNSDB Enrichment Module",
+            "relation": "Resolved_To",
+            "source": {
+              "value": "dns3.tacnet.org",
+              "type": "domain"
+            },
+            "related": {
+              "type": "ipv6",
+              "value": "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
+            }
+          }
+    ]
+  }
+   ]
   }

@@ -211,5 +211,84 @@
       }
     ]
   }
+],
+    "output-aggregated": [
+      {
+        "schema_version": "1.0.17",
+        "type": "sighting",
+        "source": "Farsight DNSDB",
+        "title": "Found in Farsight DNSDB",
+        "confidence": "High",
+        "internal": false,
+        "count": 1986,
+        "observables": [
+          {
+            "type": "domain",
+            "value": "google.com"
+          }
+        ],
+        "relations": [
+          {
+            "origin": "Farsight DNSDB Enrichment Module",
+            "relation": "Resolved_To",
+            "source": {
+              "type": "domain",
+              "value": "google.com"
+            },
+            "related": {
+              "value": "173.194.220.100",
+              "type": "ip"
+            }
+          },
+          {
+            "origin": "Farsight DNSDB Enrichment Module",
+            "relation": "Resolved_To",
+            "source": {
+              "type": "domain",
+              "value": "google.com"
+            },
+            "related": {
+              "value": "173.194.220.101",
+              "type": "ip"
+            }
+          },
+          {
+            "origin": "Farsight DNSDB Enrichment Module",
+            "relation": "Resolved_To",
+            "source": {
+              "type": "domain",
+              "value": "google.com"
+            },
+            "related": {
+              "value": "2001:4860:4001:802::1008",
+              "type": "ipv6"
+            }
+          },
+          {
+            "origin": "Farsight DNSDB Enrichment Module",
+            "relation": "Resolved_To",
+            "source": {
+              "type": "domain",
+              "value": "google.com"
+            },
+            "related": {
+              "value": "74.125.224.64",
+              "type": "ip"
+            }
+          },
+          {
+            "origin": "Farsight DNSDB Enrichment Module",
+            "relation": "Resolved_To",
+            "source": {
+              "type": "domain",
+              "value": "google.com"
+            },
+            "related": {
+              "value": "74.125.224.65",
+              "type": "ip"
+            }
+          }
+        ]
+      }
 ]
   }
