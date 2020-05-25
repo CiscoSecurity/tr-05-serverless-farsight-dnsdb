@@ -42,7 +42,6 @@ def test_map(input_data):
                 else:
                     print('*')
 
-
         assert results == data['output']
 
 

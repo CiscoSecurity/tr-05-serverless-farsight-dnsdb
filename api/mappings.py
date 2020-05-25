@@ -31,12 +31,21 @@ class Mapping(metaclass=ABCMeta):
     def type(cls):
         """Returns the observable type that the mapping is able to process."""
 
+    @staticmethod
+    @abstractmethod
+    def _extract_related(record):
+        """Extracts the list of items an observable is related to
+                according to Farsight data record."""
+
+    @abstractmethod
+    def _resolved_to(self, related):
+        """Returns TR resolved_to relation
+                depending on an observable and related types."""
+
     def _sighting(self, record):
         def observed_time():
-            start = {
-                'start_time':
-                    record.get('time_first') or record['zone_time_first']
-            }
+            start = {'start_time': (record.get('time_first')
+                                    or record['zone_time_first'])}
 
             end = record.get('time_last') or record.get('zone_time_last')
             end = {'end_time': end} if end else {}
@@ -56,24 +65,6 @@ class Mapping(metaclass=ABCMeta):
             'observed_time': observed_time(),
         }
 
-    @abstractmethod
-    def extract_related(self, record):
-        pass
-
-    def aggregate_data(self, lookup_data):
-        count = 0
-        related = set()
-
-        for record in lookup_data:
-            count += record['count']
-            related.update(set(self.extract_related(record)))
-
-        return [{
-            'count': count,
-            'related': related,
-            'time_first': f'{datetime.now().isoformat(timespec="seconds")}Z'
-        }]
-
     def extract_sightings(self, lookup_data, limit, aggregate=True):
         # Search result may be missing either time_ or zone_time_ pair
         # but at least one pair of timestamps will always be present.
@@ -81,24 +72,38 @@ class Mapping(metaclass=ABCMeta):
             key=lambda r: r.get('time_last') or r.get('zone_time_last'),
             reverse=True
         )
-
         lookup_data = lookup_data[:limit]
 
         if aggregate:
             lookup_data = self.aggregate_data(lookup_data)
 
         result = []
-        for r in lookup_data:
-            sighting = self._sighting(r)
+        for record in lookup_data:
 
-            sighting['relations'] = [
-                self.resolved_to(related)
-                for related in
-                (r['related'] if aggregate else self.extract_related(r))
-            ]
-            result.append(sighting)
+            related = (record['related'] if aggregate
+                       else self._extract_related(record))
+
+            if related:
+                sighting = self._sighting(record)
+                sighting['relations'] = [self._resolved_to(r) for r in related]
+
+                result.append(sighting)
 
         return result
+
+    def aggregate_data(self, lookup_data):
+        count = 0
+        related = set()
+
+        for record in lookup_data:
+            count += record['count']
+            related.update(set(self._extract_related(record)))
+
+        return [{
+            'count': count,
+            'time_first': f'{datetime.now().isoformat(timespec="seconds")}Z',
+            'related': related
+        }]
 
     @staticmethod
     def observable_relation(relation_type, source, related):
@@ -115,12 +120,12 @@ class Domain(Mapping):
     def type(cls):
         return 'domain'
 
-    RRTYPES = {
-        'A': 'ip',
-        'AAAA': 'ipv6',
-    }
+    RRTYPES = ('A', 'AAAA')
 
-    def resolved_to(self, ip):
+    def _extract_related(self, record):
+        return record['rdata']
+
+    def _resolved_to(self, ip):
         return self.observable_relation(
             RESOLVED_TO,
             source=self.observable,
@@ -143,9 +148,6 @@ class Domain(Mapping):
 
         return result
 
-    def extract_related(self, record):
-        return record['rdata']
-
     def extract_sightings(self, lookup_data, limit, aggregate=True):
         lookup_data = [r for r in lookup_data if r['rrtype'] in self.RRTYPES]
         return super().extract_sightings(lookup_data, limit, aggregate)
@@ -156,7 +158,10 @@ class IP(Mapping):
     def type(cls):
         return 'ip'
 
-    def resolved_to(self, domain):
+    def _extract_related(self, record):
+        return [record['rrname']]
+
+    def _resolved_to(self, domain):
         # Remove trailing dot for compatibility with TR
         domain = domain.rstrip('.')
         return self.observable_relation(
@@ -164,9 +169,6 @@ class IP(Mapping):
             source={'value': domain, 'type': 'domain'},
             related=self.observable
         )
-
-    def extract_related(self, record):
-        return [record['rrname']]
 
 
 class IPV6(IP):
