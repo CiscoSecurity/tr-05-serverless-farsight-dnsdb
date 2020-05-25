@@ -92,6 +92,7 @@ class Mapping(metaclass=ABCMeta):
         return result
 
     def aggregate_data(self, lookup_data):
+        """Restructure Farsight response for single sighting mode."""
         count = 0
         related = set()
 
