@@ -40,6 +40,9 @@ Credentials must be encrypted with JWT.
 After encryption set your `SECRET_KEY` environment 
 variable in AWS lambda for successful decryption in Relay API.
 
+Farsight API keys have a primary quota, which limits the number of requests that can be made to the data-fetching endpoints 
+(more details can be found at [Farsight DNSDB API Documentation:Service Limits](https://api.dnsdb.info/#service-limits))
+
 ## Installation
 
 ```bash
@@ -78,6 +81,14 @@ Environment Variables:
  Has the upper bound of `1000` to avoid getting overwhelmed with too much data,
   so any greater values are still acceptable but also limited at the same time.
 
+- `AGGREGATE` - the flag used to switch `single sighting mode` on/off.
+ Applicable to: `Sighting`.
+ Must be a boolean (`True`, `False`).
+ Default value - `True`, used if the variable is not set or set variable is incorrect.
+ When set to `False` a sighting is created for each timestamped Domain -> IP resolutions data piece,
+ otherwise a single sighting is created with Domain -> IP resolutions aggregated as observable relations.
+ 
+ 
 #### As a TR Relay Module:
 - Create: `relay add`.
 - Update: `relay edit`.
