@@ -35,13 +35,16 @@ def observe_observables():
     sightings = []
 
     limit = current_app.config['CTR_ENTITIES_LIMIT']
+    aggr = current_app.config['AGGREGATE']
 
     for x in observables:
         mapping = Mapping.for_(x)
 
         if mapping:
             lookup_data = client.lookup(x)
-            sightings.extend(mapping.extract_sightings(lookup_data, limit))
+            sightings.extend(
+                mapping.extract_sightings(lookup_data, limit, aggr)
+            )
 
     if sightings:
         data['sightings'] = format_docs(sightings)
