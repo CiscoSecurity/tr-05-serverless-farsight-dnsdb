@@ -1,3 +1,4 @@
+import json
 from typing import Optional
 
 from authlib.jose import jwt
@@ -41,7 +42,9 @@ def get_json(schema):
     message = schema.validate(data)
 
     if message:
-        raise InvalidArgumentError(message)
+        raise InvalidArgumentError(
+            f'Invalid JSON payload received. {json.dumps(message)}'
+        )
 
     return data
 

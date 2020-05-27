@@ -155,7 +155,9 @@ def invalid_json_expected_payload(route, client):
     if route.endswith('/observe/observables'):
         return {'errors': [
             {'code': INVALID_ARGUMENT,
-             'message': "{0: {'value': ['Missing data for required field.']}}",
+             'message':
+                 'Invalid JSON payload received. '
+                 '{"0": {"value": ["Missing data for required field."]}}',
              'type': 'fatal'}
         ]}
 
