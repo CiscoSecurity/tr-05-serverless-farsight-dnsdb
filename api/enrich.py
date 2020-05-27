@@ -1,6 +1,6 @@
 from functools import partial
 
-from flask import Blueprint, current_app
+from flask import Blueprint, current_app, g
 
 from api.client import FarsightClient
 from api.mappings import Mapping
@@ -31,8 +31,8 @@ def observe_observables():
     client = FarsightClient(current_app.config['API_URL'],
                             key,
                             current_app.config['USER_AGENT'])
-    data = {}
-    sightings = []
+
+    g.sightings = []
 
     limit = current_app.config['CTR_ENTITIES_LIMIT']
     aggr = current_app.config['AGGREGATE']
@@ -42,11 +42,10 @@ def observe_observables():
 
         if mapping:
             lookup_data = client.lookup(x)
-            sightings.extend(
-                mapping.extract_sightings(lookup_data, limit, aggr)
-            )
+            if lookup_data:
+                g.sightings.extend(
+                    mapping.extract_sightings(lookup_data, limit, aggr)
+                )
 
-    if sightings:
-        data['sightings'] = format_docs(sightings)
-
+    data = {'sightings': format_docs(g.sightings)} if g.sightings else {}
     return jsonify_data(data)

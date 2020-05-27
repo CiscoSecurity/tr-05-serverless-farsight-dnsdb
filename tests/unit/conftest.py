@@ -89,7 +89,8 @@ def unauthorized_creds_expected_payload(route):
                  'message': ("Unexpected response from Farsight DNSDB: "
                              "Error: Bad API key"),
                  'type': 'fatal'}
-            ]
+            ],
+            'data': {}
         }
 
     if route.endswith('/deliberate/observables'):
@@ -140,7 +141,8 @@ def invalid_jwt_expected_payload(route):
                 {'code': PERMISSION_DENIED,
                  'message': 'Invalid Authorization Bearer JWT.',
                  'type': 'fatal'}
-            ]
+            ],
+            'data': {}
         }
 
     if route.endswith('/deliberate/observables'):
@@ -158,8 +160,9 @@ def invalid_json_expected_payload(route, client):
              'message':
                  'Invalid JSON payload received. '
                  '{"0": {"value": ["Missing data for required field."]}}',
-             'type': 'fatal'}
-        ]}
+             'type': 'fatal'}],
+            'data': {}
+        }
 
     if route.endswith('/deliberate/observables'):
         return {'data': {}}

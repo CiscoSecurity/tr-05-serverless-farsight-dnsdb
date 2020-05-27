@@ -1,4 +1,5 @@
 import json
+from http import HTTPStatus
 
 import requests
 
@@ -7,6 +8,8 @@ from api.errors import (
     UnexpectedFarsightResponseError
 )
 from api.utils import join_url
+
+NOT_CRITICAL_ERRORS = (HTTPStatus.BAD_REQUEST, HTTPStatus.NOT_FOUND)
 
 
 class FarsightClient:
@@ -45,10 +48,13 @@ class FarsightClient:
         )
         response = requests.get(url, headers=self.headers)
 
-        if not response.ok:
-            raise UnexpectedFarsightResponseError(response)
+        if response.ok:
+            return [json.loads(raw) for raw in response.iter_lines()]
 
-        return [json.loads(raw) for raw in response.iter_lines()]
+        if response.status_code in NOT_CRITICAL_ERRORS:
+            return []
+
+        raise UnexpectedFarsightResponseError(response)
 
     def lookup(self, observable, limit=None):
         return self._request_farsight(observable, 'lookup', limit)
