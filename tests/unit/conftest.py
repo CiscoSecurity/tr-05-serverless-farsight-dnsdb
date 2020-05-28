@@ -55,21 +55,21 @@ def farsight_api_error_mock(status_code, text=None):
     return mock_response
 
 
-@fixture(scope='session')
-def farsight_response_ok(secret_key):
-    return farsight_api_response_mock(
-            HTTPStatus.OK, payload=[
-                {
-                    "count": 4,
-                    "time_first": "2013-01-18T05:38:08Z",
-                    "time_last": "2013-01-22T23:17:10Z",
-                    "rrname": "google.com.",
-                    "rrtype": "A",
-                    "bailiwick": ".",
-                    "rdata": ["74.125.128.100", "74.125.128.101"]
-                }
-            ]
-        )
+@fixture(scope='function')
+def farsight_response_ok():
+    yield farsight_api_response_mock(
+        HTTPStatus.OK, payload=[
+            {
+                "count": 4,
+                "time_first": "2013-01-18T05:38:08Z",
+                "time_last": "2013-01-22T23:17:10Z",
+                "rrname": "google.com.",
+                "rrtype": "A",
+                "bailiwick": ".",
+                "rdata": ["74.125.128.100", "74.125.128.101"]
+            }
+        ]
+    )
 
 
 @fixture(scope='session')
@@ -80,18 +80,31 @@ def farsight_response_unauthorized_creds(secret_key):
     )
 
 
+@fixture(scope='session')
+def farsight_response_not_found(secret_key):
+    return farsight_api_error_mock(
+        HTTPStatus.NOT_FOUND,
+        'Error: Not Found'
+    )
+
+
 @fixture(scope='module')
-def unauthorized_creds_expected_payload(route):
+def unauthorized_creds_body():
+    return {
+        'errors': [
+            {'code': PERMISSION_DENIED,
+             'message': ("Unexpected response from Farsight DNSDB: "
+                         "Error: Bad API key"),
+             'type': 'fatal'}
+        ],
+        'data': {}
+    }
+
+
+@fixture(scope='module')
+def unauthorized_creds_expected_payload(route, unauthorized_creds_body):
     if route in ('/observe/observables', '/health'):
-        return {
-            'errors': [
-                {'code': PERMISSION_DENIED,
-                 'message': ("Unexpected response from Farsight DNSDB: "
-                             "Error: Bad API key"),
-                 'type': 'fatal'}
-            ],
-            'data': {}
-        }
+        return unauthorized_creds_body
 
     if route.endswith('/deliberate/observables'):
         return {'data': {}}
@@ -151,9 +164,8 @@ def invalid_jwt_expected_payload(route):
     if route.endswith('/refer/observables'):
         return {'data': []}
 
-
 @fixture(scope='module')
-def invalid_json_expected_payload(route, client):
+def invalid_json_expected_payload(route):
     if route.endswith('/observe/observables'):
         return {'errors': [
             {'code': INVALID_ARGUMENT,
@@ -163,6 +175,40 @@ def invalid_json_expected_payload(route, client):
              'type': 'fatal'}],
             'data': {}
         }
+
+    if route.endswith('/deliberate/observables'):
+        return {'data': {}}
+
+    return {'data': []}
+
+
+@fixture(scope='module')
+def success_enrich_body():
+    return {
+            'data':
+                {'sightings': {'count': 1, 'docs': [
+                    {'confidence': 'High', 'count': 4,
+                     'internal': False, 'observables': [
+                        {'type': 'domain', 'value': 'google.com'}],
+                     'relations': [
+                         {'origin': 'Farsight DNSDB Enrichment Module',
+                          'related': {'type': 'ip', 'value': '74.125.128.100'},
+                          'relation': 'Resolved_To',
+                          'source': {'type': 'domain', 'value': 'google.com'}},
+                         {'origin': 'Farsight DNSDB Enrichment Module',
+                          'related': {'type': 'ip', 'value': '74.125.128.101'},
+                          'relation': 'Resolved_To',
+                          'source': {'type': 'domain',
+                                     'value': 'google.com'}}],
+                     'schema_version': '1.0.17', 'source': 'Farsight DNSDB',
+                     'title': 'Found in Farsight DNSDB',
+                     'type': 'sighting'}]}}}
+
+
+@fixture(scope='module')
+def success_enrich_expected_payload(route, success_enrich_body):
+    if route.endswith('/observe/observables'):
+        return success_enrich_body
 
     if route.endswith('/deliberate/observables'):
         return {'data': {}}
