@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timedelta
 from http import HTTPStatus
 
 import requests
@@ -34,9 +35,17 @@ class FarsightClient:
 
         return path
 
-    def _request_farsight(self, observable, action, limit=None):
+    @staticmethod
+    def _time_filter(days_delta):
+        start = datetime.now() - timedelta(days=days_delta)
+        return f'&time_last_after={int(start.timestamp())}'
+
+    def _request_farsight(self, observable, action,
+                          number_of_days_to_filter=None, limit=None):
 
         path = self._path(observable['type'])
+        time_filter = self._time_filter(
+            number_of_days_to_filter) if number_of_days_to_filter else ''
 
         url = join_url(
             self.base_url,
@@ -44,7 +53,8 @@ class FarsightClient:
             path,
             observable["value"],
             '?humantime=True&aggr=False',
-            f'&limit={limit}' if limit else ''
+            f'&limit={limit}' if limit else '',
+            time_filter
         )
         response = requests.get(url, headers=self.headers)
 
@@ -56,5 +66,7 @@ class FarsightClient:
 
         raise UnexpectedFarsightResponseError(response)
 
-    def lookup(self, observable, limit=None):
-        return self._request_farsight(observable, 'lookup', limit)
+    def lookup(self, observable, number_of_days_to_filter=None, limit=None):
+        return self._request_farsight(
+            observable, 'lookup', number_of_days_to_filter, limit
+        )

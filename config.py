@@ -13,6 +13,8 @@ class Config:
     USER_AGENT = ('Cisco Threat Response Integrations '
                   '<tr-integrations-support@cisco.com>')
 
+    NUMBER_OF_DAYS_FOR_FARSIGHT_TIME_FILTER = 90
+
     CTR_ENTITIES_LIMIT_DEFAULT = 100
     CTR_ENTITIES_LIMIT_MAX = 1000
 
