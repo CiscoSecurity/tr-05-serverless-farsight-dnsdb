@@ -1,8 +1,9 @@
+import json
 from typing import Optional
 
 from authlib.jose import jwt
 from authlib.jose.errors import JoseError
-from flask import request, current_app, jsonify
+from flask import request, current_app, jsonify, g
 
 from api.errors import InvalidJWTError, InvalidArgumentError
 
@@ -41,7 +42,9 @@ def get_json(schema):
     message = schema.validate(data)
 
     if message:
-        raise InvalidArgumentError(message)
+        raise InvalidArgumentError(
+            f'Invalid JSON payload received. {json.dumps(message)}'
+        )
 
     return data
 
@@ -52,6 +55,18 @@ def jsonify_data(data):
 
 def jsonify_errors(error):
     return jsonify({'errors': [error]})
+
+
+def jsonify_result():
+    result = {'data': {}}
+
+    if g.get('sightings'):
+        result['data']['sightings'] = format_docs(g.sightings)
+
+    if g.get('errors'):
+        result['errors'] = g.errors
+
+    return jsonify(result)
 
 
 def format_docs(docs):
