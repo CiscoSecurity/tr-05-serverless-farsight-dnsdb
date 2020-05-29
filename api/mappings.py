@@ -68,16 +68,14 @@ class Mapping(metaclass=ABCMeta):
     def extract_sightings(self, lookup_data, limit, aggregate=True):
         # Search result may be missing either time_ or zone_time_ pair
         # but at least one pair of timestamps will always be present.
+        lookup_data.sort(
+            key=lambda r: r.get('time_last') or r.get('zone_time_last'),
+            reverse=True
+        )
+        lookup_data = lookup_data[:limit]
 
         if aggregate:
             lookup_data = self.aggregate_data(lookup_data)
-
-        else:
-            lookup_data.sort(
-                key=lambda r: r.get('time_last') or r.get('zone_time_last'),
-                reverse=True
-            )
-            lookup_data = lookup_data[:limit]
 
         result = []
         for record in lookup_data:
