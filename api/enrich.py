@@ -36,12 +36,14 @@ def observe_observables():
 
     limit = current_app.config['CTR_ENTITIES_LIMIT']
     aggr = current_app.config['AGGREGATE']
+    time_delta = (current_app.config['NUMBER_OF_DAYS_FOR_FARSIGHT_TIME_FILTER']
+                  if aggr else None)
 
     for x in observables:
         mapping = Mapping.for_(x)
 
         if mapping:
-            lookup_data = client.lookup(x)
+            lookup_data = client.lookup(x, time_delta)
             if lookup_data:
                 g.sightings.extend(
                     mapping.extract_sightings(lookup_data, limit, aggr)
