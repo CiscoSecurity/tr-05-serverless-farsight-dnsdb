@@ -42,6 +42,10 @@ class Mapping(metaclass=ABCMeta):
         """Returns TR resolved_to relation
                 depending on an observable and related types."""
 
+    @abstractmethod
+    def _description(self):
+        """Returns description field depending on observable type."""
+
     def _sighting(self, record):
         def observed_time():
             start = {'start_time': (record.get('time_first')
@@ -63,6 +67,7 @@ class Mapping(metaclass=ABCMeta):
             'count': record['count'],
             'observables': [self.observable],
             'observed_time': observed_time(),
+            'description': self._description()
         }
 
     def extract_sightings(self, lookup_data, limit, aggregate=True):
@@ -123,6 +128,9 @@ class Domain(Mapping):
 
     RRTYPES = ('A', 'AAAA')
 
+    def _description(self):
+        return f'IP addresses that {self.observable["value"]} resolves to'
+
     def _extract_related(self, record):
         return record['rdata']
 
@@ -158,6 +166,9 @@ class IP(Mapping):
     @classmethod
     def type(cls):
         return 'ip'
+
+    def _description(self):
+        return f'Hostnames that have resolved to {self.observable["value"]}'
 
     def _extract_related(self, record):
         return [record['rrname']]
