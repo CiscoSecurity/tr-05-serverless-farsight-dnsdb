@@ -169,7 +169,7 @@ class IP(Mapping):
         return 'ip'
 
     def _description(self, aggr=True):
-        return (f'Hostname{"s" if aggr else ""} ' 
+        return (f'Hostname{"s" if aggr else ""} '
                 f'that have resolved to {self.observable["value"]}')
 
     def _extract_related(self, record):
