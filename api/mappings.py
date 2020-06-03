@@ -43,10 +43,10 @@ class Mapping(metaclass=ABCMeta):
                 depending on an observable and related types."""
 
     @abstractmethod
-    def _description(self):
+    def _description(self, aggr=True):
         """Returns description field depending on observable type."""
 
-    def _sighting(self, record):
+    def _sighting(self, record, description):
         def observed_time():
             start = {'start_time': (record.get('time_first')
                                     or record['zone_time_first'])}
@@ -67,7 +67,7 @@ class Mapping(metaclass=ABCMeta):
             'count': record['count'],
             'observables': [self.observable],
             'observed_time': observed_time(),
-            'description': self._description()
+            'description': description
         }
 
     def extract_sightings(self, lookup_data, limit, aggregate=True):
@@ -83,13 +83,14 @@ class Mapping(metaclass=ABCMeta):
             lookup_data = lookup_data[:limit]
 
         result = []
+        description = self._description(aggregate)
         for record in lookup_data:
 
             related = (record['related'] if aggregate
                        else self._extract_related(record))
 
             if related:
-                sighting = self._sighting(record)
+                sighting = self._sighting(record, description)
                 sighting['relations'] = [self._resolved_to(r) for r in related]
 
                 result.append(sighting)
@@ -128,7 +129,7 @@ class Domain(Mapping):
 
     RRTYPES = ('A', 'AAAA')
 
-    def _description(self):
+    def _description(self, aggr=True):
         return f'IP addresses that {self.observable["value"]} resolves to'
 
     def _extract_related(self, record):
@@ -144,8 +145,8 @@ class Domain(Mapping):
             }
         )
 
-    def _sighting(self, record):
-        result = super()._sighting(record)
+    def _sighting(self, record, description):
+        result = super()._sighting(record, description)
 
         if record.get("bailiwick"):
             # SightingDataTable Object:
@@ -167,8 +168,9 @@ class IP(Mapping):
     def type(cls):
         return 'ip'
 
-    def _description(self):
-        return f'Hostnames that have resolved to {self.observable["value"]}'
+    def _description(self, aggr=True):
+        return (f'Hostname{"s" if aggr else ""} '
+                f'that have resolved to {self.observable["value"]}')
 
     def _extract_related(self, record):
         return [record['rrname']]
