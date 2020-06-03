@@ -181,6 +181,7 @@ def success_enrich_body():
         'data':
             {'sightings': {'count': 1, 'docs': [
                 {'confidence': 'High', 'count': 4,
+                 "description": 'IP addresses that google.com resolves to',
                  'internal': False, 'observables': [
                     {'type': 'domain', 'value': 'google.com'}],
                  'relations': [
