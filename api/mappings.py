@@ -18,7 +18,7 @@ class Mapping(metaclass=ABCMeta):
 
     @classmethod
     def for_(cls, observable):
-        """Returns an instance of `Mapping` for the specified type."""
+        """Return an instance of `Mapping` for the specified type."""
 
         for subcls in all_subclasses(Mapping):
             if subcls.type() == observable['type']:
@@ -29,22 +29,28 @@ class Mapping(metaclass=ABCMeta):
     @classmethod
     @abstractmethod
     def type(cls):
-        """Returns the observable type that the mapping is able to process."""
+        """Return the observable type that the mapping is able to process."""
 
     @staticmethod
     @abstractmethod
     def _extract_related(record):
-        """Extracts the list of items an observable is related to
-                according to Farsight data record."""
+        """
+        Extract the list of items an observable is related to
+        according to Farsight data record.
+
+        """
 
     @abstractmethod
     def _resolved_to(self, related):
-        """Returns TR resolved_to relation
-                depending on an observable and related types."""
+        """
+        Return TR resolved_to relation
+        depending on an observable and related types.
+
+        """
 
     @abstractmethod
     def _description(self, aggr=True):
-        """Returns description field depending on observable type."""
+        """Return description field depending on observable type."""
 
     def _sighting(self, record, description):
         def observed_time():
@@ -169,8 +175,8 @@ class IP(Mapping):
         return 'ip'
 
     def _description(self, aggr=True):
-        return (f'Hostname{"s" if aggr else ""} '
-                f'that have resolved to {self.observable["value"]}')
+        return (f'{"Hostnames that have" if aggr else "Hostname that has"}'
+                f' resolved to {self.observable["value"]}')
 
     def _extract_related(self, record):
         return [record['rrname']]
