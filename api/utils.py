@@ -32,9 +32,6 @@ def get_json(schema):
     Parse the incoming request's data as JSON.
     Validate it against the specified schema.
 
-    Note. This function is just an example of how one can read and check
-    anything before passing to an API endpoint, and thus it may be modified in
-    any way, replaced by another function, or even removed from the module.
     """
 
     data = request.get_json(force=True, silent=True, cache=False)
@@ -82,7 +79,8 @@ def join_url(base, *parts):
 
 def all_subclasses(cls):
     """
-        Retrieves set of class subclasses recursively.
+    Retrieve set of class subclasses recursively.
+
     """
     subclasses = set(cls.__subclasses__())
     return subclasses.union(s for c in subclasses for s in all_subclasses(c))
