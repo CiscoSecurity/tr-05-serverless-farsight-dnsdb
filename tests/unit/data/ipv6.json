@@ -24,7 +24,7 @@
     "confidence": "High",
     "internal": false,
     "count": 1,
-    "description": "Hostname that have resolved to 2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+    "description": "Hostname that has resolved to 2001:0db8:85a3:0000:0000:8a2e:0370:7334",
     "observables": [
       {
         "type": "ipv6",
@@ -58,7 +58,7 @@
     "confidence": "High",
     "internal": false,
     "count": 1,
-    "description": "Hostname that have resolved to 2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+    "description": "Hostname that has resolved to 2001:0db8:85a3:0000:0000:8a2e:0370:7334",
     "observables": [
       {
         "type": "ipv6",

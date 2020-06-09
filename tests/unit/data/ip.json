@@ -26,7 +26,7 @@
         "confidence": "High",
         "internal": false,
         "count": 1,
-        "description": "Hostname that have resolved to 127.0.0.1",
+        "description": "Hostname that has resolved to 127.0.0.1",
         "observables": [
           {
             "type": "ip",
@@ -60,7 +60,7 @@
         "confidence": "High",
         "internal": false,
         "count": 1,
-        "description": "Hostname that have resolved to 127.0.0.1",
+        "description": "Hostname that has resolved to 127.0.0.1",
         "observables": [
           {
             "type": "ip",

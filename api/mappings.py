@@ -169,8 +169,8 @@ class IP(Mapping):
         return 'ip'
 
     def _description(self, aggr=True):
-        return (f'Hostname{"s" if aggr else ""} '
-                f'that have resolved to {self.observable["value"]}')
+        return (f'{"Hostnames that have" if aggr else "Hostname that has"}'
+                f' resolved to {self.observable["value"]}')
 
     def _extract_related(self, record):
         return [record['rrname']]
