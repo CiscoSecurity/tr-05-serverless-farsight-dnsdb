@@ -74,7 +74,7 @@ class Mapping(metaclass=ABCMeta):
 
         result = {
             **CTIM_DEFAULTS,
-            'id': f'transient:{uuid4()}',
+            'id': f'transient:sighting-{uuid4()}',
             'type': 'sighting',
             'source': 'Farsight DNSDB',
             'title': 'Found in Farsight DNSDB',

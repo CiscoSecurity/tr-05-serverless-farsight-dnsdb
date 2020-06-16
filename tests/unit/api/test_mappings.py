@@ -44,7 +44,7 @@ def test_map(input_data, aggregate):
 
         time = datetime.now().isoformat(timespec="minutes")
         for record in results:
-            assert record.pop('id').startswith('transient:')
+            assert record.pop('id').startswith('transient:sighting-')
             if aggregate:
                 assert record.pop('observed_time').pop('start_time'
                                                        ).startswith(time)
