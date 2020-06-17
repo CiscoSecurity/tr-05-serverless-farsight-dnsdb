@@ -35,6 +35,7 @@
       "start_time": "2019-12-01T23:47:00Z",
       "end_time": "2019-12-01T23:47:00Z"
     },
+    "sensor": "Zone file import",
     "relations": [
       {
         "origin": "Farsight DNSDB Enrichment Module",
@@ -69,6 +70,7 @@
       "start_time": "2019-12-01T23:47:00Z",
       "end_time": "2019-12-01T23:47:00Z"
     },
+    "sensor": "Zone file import",
     "relations": [
       {
         "origin": "Farsight DNSDB Enrichment Module",

@@ -54,17 +54,27 @@ class Mapping(metaclass=ABCMeta):
 
     def _sighting(self, record, description):
         def observed_time():
-            start = {'start_time': (record.get('time_first')
-                                    or record['zone_time_first'])}
+            start = {
+                'start_time':
+                    record.get('time_first')
+                    or record.get('zone_time_first')
+                    or f'{datetime.now().isoformat(timespec="seconds")}Z',
+            }
 
             end = record.get('time_last') or record.get('zone_time_last')
             end = {'end_time': end} if end else {}
 
             return {**start, **end}
 
-        return {
+        def data_source():
+            if record.get('time_first'):
+                return 'Passive DNS replication'
+            elif record.get('zone_time_first'):
+                return 'Zone file import'
+
+        result = {
             **CTIM_DEFAULTS,
-            'id': f'transient:{uuid4()}',
+            'id': f'transient:sighting-{uuid4()}',
             'type': 'sighting',
             'source': 'Farsight DNSDB',
             'title': 'Found in Farsight DNSDB',
@@ -73,8 +83,14 @@ class Mapping(metaclass=ABCMeta):
             'count': record['count'],
             'observables': [self.observable],
             'observed_time': observed_time(),
-            'description': description
+            'description': description,
         }
+
+        sensor = data_source()
+        if sensor:
+            result['sensor'] = sensor
+
+        return result
 
     def extract_sightings(self, lookup_data, limit, aggregate=True):
         # Search result may be missing either time_ or zone_time_ pair
@@ -114,7 +130,6 @@ class Mapping(metaclass=ABCMeta):
 
         return [{
             'count': count,
-            'time_first': f'{datetime.now().isoformat(timespec="seconds")}Z',
             'related': sorted(related)
         }]
 
