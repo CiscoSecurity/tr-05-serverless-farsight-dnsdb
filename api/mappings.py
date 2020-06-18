@@ -112,6 +112,7 @@ class Mapping(metaclass=ABCMeta):
                        else self._extract_related(record))
 
             if related:
+                related = sorted(set(related))
                 sighting = self._sighting(record, description)
                 sighting['relations'] = [self._resolved_to(r) for r in related]
 
@@ -122,11 +123,11 @@ class Mapping(metaclass=ABCMeta):
     def aggregate_data(self, lookup_data):
         """Restructure Farsight response for single sighting mode."""
         count = 0
-        related = set()
+        related = []
 
         for record in lookup_data:
             count += record['count']
-            related.update(set(self._extract_related(record)))
+            related.extend(self._extract_related(record))
 
         return [{
             'count': count,
