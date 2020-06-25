@@ -255,7 +255,7 @@ header set to `Bearer <JWT>`.
 
 ```json
 {
-  "key": "<Farsight_DNSDB_API_KEY>"
+  "key": "<FARSIGHT_DNSDB_API_KEY>"
 }
 ```
 
