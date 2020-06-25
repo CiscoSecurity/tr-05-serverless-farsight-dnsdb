@@ -1,0 +1,11 @@
+{
+  "name": "Farsight DNSDB",
+  "jwt": {
+   "key": "Farsight DNSDB API KEY>"
+},
+  "region": {
+    "us": "b3edb2d2-57a5-48b7-8f4d-a8eb99708227",
+    "eu":  "e3fcd35f-4a9b-4e4f-b81b-a55f106a3f1d",
+    "apjc": "73038ac3-09ca-4be2-9c63-559d6016998a"
+  }
+}
