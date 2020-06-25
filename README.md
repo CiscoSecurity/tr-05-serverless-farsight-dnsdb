@@ -269,7 +269,7 @@ header set to `Bearer <JWT>`.
   - Must be a positive integer. Defaults to `100` (if unset or incorrect).
   
 - `AGGREGATE`
-  - Switches the `Aggregated Mode`.
+  - Switches on the `Aggregated Mode`.
   - Applies to the following CTIM entities:
     - `Sighting`.
   - Must be a boolean (`True`, `False`). 
@@ -278,26 +278,26 @@ header set to `Bearer <JWT>`.
 ### CTIM Mapping Specifics
 
 There are two possible mappings of Farsight historical `Domain->IP resolution` 
-to CTIM `Sighting` which can be switched with an environment variable `AGGREGATE`.
+to CTIM `Sighting` which can be switched between with an environment variable `AGGREGATE`.
 
 If `Aggregated Mode` is off, each `resolution` generates a CTIM `Sighting`.
 If an investigated observable is a `domain`, 
-it's is linked to each `IP` item from the `resolution.rdata` field 
-with an observable relation `domain->'Resolved_To'->IP`. 
+it is linked to each `IP` item from the `resolution.rdata` field 
+with an observed relation `domain->'Resolved_To'->IP`. 
 If an investigated observable is an `IP`, 
-it's is linked to a `domain` from the `resolution.rrname` field
- with an observable relation `domain->'Resolved_To'->IP`.
+it is linked to a `domain` from the `resolution.rrname` field
+ with an observed relation `domain->'Resolved_To'->IP`.
 
 Each Farsight `resolution` is timestamped with at least one pair of fields
 `time_first and time_last` (indicating the time an observable was seen via passive DNS replication)
 or `zone_time_first and zone_time_list` (indicating the time an observable was seen via zone file import)
 which is used as a `Sighting.observed_time`.
-A `Sighting.sensor` field depends on the time pair used and has a value 
+The `Sighting.sensor` field depends on the time pair used and has a value 
 `Passive DNS replication` or `Zone file import` correspondingly. 
-In the case of both pairs are presented `time_first and time_last` pair is used.
+If both pairs are presented, `time_first and time_last` pair is used.
 
 In `Aggregated Mode` all `resolutions` for the last `90 days `
 generate a single CTIM `Sighting` 
 with unique values from the resolution `rdata` or `rrname` fields 
-linked as `Sighting` observable relations.
+linked as `Sighting` observed relations.
 The time of investigation is used as a `Sighting.observed_time.start_time`.
