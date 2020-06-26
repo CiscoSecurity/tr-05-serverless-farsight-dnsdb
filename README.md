@@ -277,7 +277,7 @@ header set to `Bearer <JWT>`.
   
 ### CTIM Mapping Specifics
 
-There are two possible mappings of Farsight historical `Domain->IP resolution` 
+There are two possible mappings of Farsight `historical Domain->IP resolution` 
 to CTIM `Sighting` which can be switched between with an environment variable `AGGREGATE`.
 
 - If `Aggregated Mode` is off, each `resolution` generates a CTIM `Sighting`.
