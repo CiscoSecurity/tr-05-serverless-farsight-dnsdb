@@ -280,24 +280,26 @@ header set to `Bearer <JWT>`.
 There are two possible mappings of Farsight historical `Domain->IP resolution` 
 to CTIM `Sighting` which can be switched between with an environment variable `AGGREGATE`.
 
-If `Aggregated Mode` is off, each `resolution` generates a CTIM `Sighting`.
-If an investigated observable is a `domain`, 
-it is linked to each `IP` item from the `resolution.rdata` field 
-with an observed relation `domain->'Resolved_To'->IP`. 
-If an investigated observable is an `IP`, 
-it is linked to a `domain` from the `resolution.rrname` field
- with an observed relation `domain->'Resolved_To'->IP`.
+- If `Aggregated Mode` is off, each `resolution` generates a CTIM `Sighting`.
+    If an investigated observable is a `domain`, 
+    it is linked to each `IP` item from the `resolution.rdata` field 
+    with an observed relation `domain->'Resolved_To'->IP`. 
+    If an investigated observable is an `IP`, 
+    it is linked to a `domain` from the `resolution.rrname` field
+    with an observed relation `domain->'Resolved_To'->IP`.
+    The resolution `count` field is used as a `Sighting.count`.
+    
+    Each Farsight `resolution` is timestamped with at least one pair of fields
+    `time_first and time_last` (indicating the time an observable was seen via passive DNS replication)
+    or `zone_time_first and zone_time_list` (indicating the time an observable was seen via zone file import)
+    which is used as a `Sighting.observed_time`.
+    The `Sighting.sensor` field depends on the time pair used and has a value 
+    `Passive DNS replication` or `Zone file import` correspondingly. 
+    If both pairs are presented, `time_first and time_last` pair is used.
 
-Each Farsight `resolution` is timestamped with at least one pair of fields
-`time_first and time_last` (indicating the time an observable was seen via passive DNS replication)
-or `zone_time_first and zone_time_list` (indicating the time an observable was seen via zone file import)
-which is used as a `Sighting.observed_time`.
-The `Sighting.sensor` field depends on the time pair used and has a value 
-`Passive DNS replication` or `Zone file import` correspondingly. 
-If both pairs are presented, `time_first and time_last` pair is used.
-
-In `Aggregated Mode` all `resolutions` for the last `90 days `
-generate a single CTIM `Sighting` 
-with unique values from the resolution `rdata` or `rrname` fields 
-linked as `Sighting` observed relations.
-The time of investigation is used as a `Sighting.observed_time.start_time`.
+- If `Aggregated Mode` is on, all `resolutions` for the last `90 days `
+    generate a single CTIM `Sighting` 
+    with unique values from the resolution `rdata` or `rrname` fields 
+    linked as `Sighting` observed relations.
+    The sum of values from the resolution `count` is used as a `Sighting.count`.
+    The time of investigation is used as a `Sighting.observed_time.start_time`.
