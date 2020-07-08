@@ -53,7 +53,7 @@ def observe_observables():
         g.errors = [{
             'type': 'fatal',
             'code': 'key error',
-            'message': 'The structure of the 3rd-party response '
+            'message': 'The data structure of Farsight DNSDB '
                        'has changed. The module is broken.'
         }]
 
