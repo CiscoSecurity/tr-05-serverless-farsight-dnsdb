@@ -223,6 +223,21 @@ def success_enrich_refer_body():
 
 
 @fixture(scope='module')
+def key_error_body():
+    return {
+        'errors': [
+            {
+                'type': 'fatal',
+                'code': 'key error',
+                'message': 'The data structure of Farsight DNSDB '
+                           'has changed. The module is broken.'
+            }
+        ],
+        'data': {}
+    }
+
+
+@fixture(scope='module')
 def success_enrich_expected_payload(
         route, success_enrich_body, success_enrich_refer_body
 ):
