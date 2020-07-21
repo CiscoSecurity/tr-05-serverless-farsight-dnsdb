@@ -18,11 +18,6 @@ def deliberate_observables():
     return jsonify_data({})
 
 
-@enrich_api.route('/refer/observables', methods=['POST'])
-def refer_observables():
-    return jsonify_data([])
-
-
 @enrich_api.route('/observe/observables', methods=['POST'])
 def observe_observables():
     key = get_key()
@@ -38,6 +33,7 @@ def observe_observables():
     aggr = current_app.config['AGGREGATE']
     time_delta = (current_app.config['NUMBER_OF_DAYS_FOR_FARSIGHT_TIME_FILTER']
                   if aggr else None)
+    url_template = current_app.config['UI_SEARCH_URL']
 
     try:
         for x in observables:
@@ -45,10 +41,15 @@ def observe_observables():
 
             if mapping:
                 lookup_data = client.lookup(x, time_delta)
+
                 if lookup_data:
+                    refer_link = url_template.format(query=x['value'])
                     g.sightings.extend(
-                        mapping.extract_sightings(lookup_data, limit, aggr)
+                        mapping.extract_sightings(
+                            lookup_data, refer_link, limit, aggr
+                        )
                     )
+
     except KeyError:
         g.errors = [{
             'type': 'fatal',
@@ -58,3 +59,31 @@ def observe_observables():
         }]
 
     return jsonify_result()
+
+
+@enrich_api.route('/refer/observables', methods=['POST'])
+def refer_observables():
+    observables = get_observables()
+
+    url_template = current_app.config['UI_SEARCH_URL']
+    observable_types_map = current_app.config['FARSIGHT_OBSERVABLES']
+
+    data = []
+    for observable in observables:
+        type_ = observable_types_map.get(observable['type'])
+        if type_:
+            data.append(
+                {
+                    'id': (
+                        'ref-farsight-dnsdb-search-{type}-{value}'.format(
+                            **observable
+                        )
+                    ),
+                    'title': f'Search for this {type_}',
+                    'description': f'Lookup this {type_} on Farsight DNSDB',
+                    'url': url_template.format(query=observable['value']),
+                    'categories': ['Search', 'Farsight DNSDB'],
+                }
+            )
+
+    return jsonify_data(data)

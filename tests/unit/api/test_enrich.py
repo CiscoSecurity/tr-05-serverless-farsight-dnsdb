@@ -18,9 +18,11 @@ def route(request):
 
 
 def test_enrich_call_with_invalid_jwt_failure(
-        route, client, invalid_jwt, invalid_jwt_expected_payload
+        route, client, invalid_jwt, valid_json,  invalid_jwt_expected_payload
 ):
-    response = client.post(route, headers=headers(invalid_jwt))
+    response = client.post(
+        route, headers=headers(invalid_jwt), json=valid_json
+    )
 
     assert response.status_code == HTTPStatus.OK
     assert response.json == invalid_jwt_expected_payload
@@ -78,7 +80,7 @@ def test_enrich_call_success(
         response = response.get_json()
         assert response.get('errors') is None
 
-        if response.get('data') and response['data'].get('sightings'):
+        if response.get('data') and isinstance(response['data'], dict):
             assert response['data']['sightings']['docs'][0].pop('id')
             assert response['data']['sightings']['docs'][0].pop(
                 'observed_time')

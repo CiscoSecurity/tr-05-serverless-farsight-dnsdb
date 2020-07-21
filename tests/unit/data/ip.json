@@ -27,6 +27,7 @@
         "internal": false,
         "count": 1,
         "description": "Hostname that has resolved to 127.0.0.1",
+        "source_uri": "source_uri",
         "observables": [
           {
             "type": "ip",
@@ -62,6 +63,7 @@
         "internal": false,
         "count": 1,
         "description": "Hostname that has resolved to 127.0.0.1",
+        "source_uri": "source_uri",
         "observables": [
           {
             "type": "ip",
@@ -99,6 +101,7 @@
       "internal": false,
       "count": 2,
       "description": "Hostnames that have resolved to 127.0.0.1",
+      "source_uri": "source_uri",
       "observables": [
         {
           "type": "ip",

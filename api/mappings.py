@@ -52,7 +52,7 @@ class Mapping(metaclass=ABCMeta):
     def _description(self, aggr=True):
         """Return description field depending on observable type."""
 
-    def _sighting(self, record, description):
+    def _sighting(self, record, refer_link, description):
         def observed_time():
             start = {
                 'start_time':
@@ -84,6 +84,7 @@ class Mapping(metaclass=ABCMeta):
             'observables': [self.observable],
             'observed_time': observed_time(),
             'description': description,
+            'source_uri': refer_link
         }
 
         sensor = data_source()
@@ -92,7 +93,9 @@ class Mapping(metaclass=ABCMeta):
 
         return result
 
-    def extract_sightings(self, lookup_data, limit, aggregate=True):
+    def extract_sightings(
+            self, lookup_data, refer_link, limit, aggregate=True
+    ):
         # Search result may be missing either time_ or zone_time_ pair
         # but at least one pair of timestamps will always be present.
         if aggregate:
@@ -113,7 +116,7 @@ class Mapping(metaclass=ABCMeta):
 
             if related:
                 related = sorted(set(related))
-                sighting = self._sighting(record, description)
+                sighting = self._sighting(record, refer_link, description)
                 sighting['relations'] = [self._resolved_to(r) for r in related]
 
                 result.append(sighting)
@@ -167,8 +170,8 @@ class Domain(Mapping):
             }
         )
 
-    def _sighting(self, record, description):
-        result = super()._sighting(record, description)
+    def _sighting(self, record, refer_link, description):
+        result = super()._sighting(record, refer_link, description)
 
         if record.get("bailiwick"):
             # SightingDataTable Object:
@@ -180,9 +183,13 @@ class Domain(Mapping):
 
         return result
 
-    def extract_sightings(self, lookup_data, limit, aggregate=True):
+    def extract_sightings(
+            self, lookup_data, refer_link, limit, aggregate=True
+    ):
         lookup_data = [r for r in lookup_data if r['rrtype'] in self.RRTYPES]
-        return super().extract_sightings(lookup_data, limit, aggregate)
+        return super().extract_sightings(
+            lookup_data, refer_link, limit, aggregate
+        )
 
 
 class IP(Mapping):

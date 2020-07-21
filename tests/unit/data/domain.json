@@ -58,6 +58,7 @@
     "internal": false,
     "count": 5,
     "description": "IP addresses that google.com resolves to",
+    "source_uri": "source_uri",
     "observables": [
       {
         "type": "domain",
@@ -118,6 +119,7 @@
     "internal": false,
     "count": 2,
     "description": "IP addresses that google.com resolves to",
+    "source_uri": "source_uri",
     "observables": [
       {
         "type": "domain",
@@ -166,6 +168,7 @@
     "internal": false,
     "count": 1979,
     "description": "IP addresses that google.com resolves to",
+    "source_uri": "source_uri",
     "observables": [
       {
         "type": "domain",
@@ -228,6 +231,7 @@
         "internal": false,
         "count": 1986,
         "description": "IP addresses that google.com resolves to",
+        "source_uri": "source_uri",
         "observables": [
           {
             "type": "domain",

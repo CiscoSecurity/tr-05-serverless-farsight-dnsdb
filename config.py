@@ -10,6 +10,13 @@ class Config:
 
     API_URL = 'https://api.dnsdb.info/'
 
+    UI_SEARCH_URL = 'https://scout.dnsdb.info/?seed={query}'
+    FARSIGHT_OBSERVABLES = {
+        'ip': 'IP',
+        'ipv6': 'IPv6',
+        'domain': 'domain'
+    }
+
     USER_AGENT = ('Cisco Threat Response Integrations '
                   '<tr-integrations-support@cisco.com>')
 
