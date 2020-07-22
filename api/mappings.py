@@ -54,17 +54,19 @@ class Mapping(metaclass=ABCMeta):
 
     def _sighting(self, record, refer_link, description):
         def observed_time():
-            start = {
-                'start_time':
-                    record.get('time_first')
-                    or record.get('zone_time_first')
-                    or f'{datetime.now().isoformat(timespec="seconds")}Z',
-            }
+            start_time = (
+                record.get('time_first')
+                or record.get('zone_time_first')
+                or f'{datetime.now().isoformat(timespec="seconds")}Z'
+            )
 
-            end = record.get('time_last') or record.get('zone_time_last')
-            end = {'end_time': end} if end else {}
+            end_time = (
+                record.get('time_last')
+                or record.get('zone_time_last')
+                or start_time
+            )
 
-            return {**start, **end}
+            return {'start_time': start_time, 'end_time': end_time}
 
         def data_source():
             if record.get('time_first'):
