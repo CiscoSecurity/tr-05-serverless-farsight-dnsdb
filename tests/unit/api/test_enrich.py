@@ -18,9 +18,11 @@ def route(request):
 
 
 def test_enrich_call_with_invalid_jwt_failure(
-        route, client, invalid_jwt, invalid_jwt_expected_payload
+        route, client, invalid_jwt, valid_json,  invalid_jwt_expected_payload
 ):
-    response = client.post(route, headers=headers(invalid_jwt))
+    response = client.post(
+        route, headers=headers(invalid_jwt), json=valid_json
+    )
 
     assert response.status_code == HTTPStatus.OK
     assert response.json == invalid_jwt_expected_payload
@@ -78,7 +80,7 @@ def test_enrich_call_success(
         response = response.get_json()
         assert response.get('errors') is None
 
-        if response.get('data') and response['data'].get('sightings'):
+        if response.get('data') and isinstance(response['data'], dict):
             assert response['data']['sightings']['docs'][0].pop('id')
             assert response['data']['sightings']['docs'][0].pop(
                 'observed_time')
@@ -131,3 +133,19 @@ def test_enrich_call_success_with_extended_error_handling(
 
         assert response['data'] == success_enrich_body['data']
         assert response['errors'] == unauthorized_creds_body['errors']
+
+
+def test_enrich_call_with_key_error(
+        client, valid_jwt, valid_json, key_error_body
+):
+    with patch('api.enrich.FarsightClient.lookup') as get_mock, \
+            patch('api.enrich.Mapping.extract_sightings') as extract_mock:
+        get_mock.side_effect = [[{'some_key': 'some_value'}]]
+        extract_mock.side_effect = [KeyError('foo')]
+
+        response = client.post(
+            '/observe/observables', headers=headers(valid_jwt), json=valid_json
+        )
+
+        assert response.status_code == HTTPStatus.OK
+        assert response.json == key_error_body

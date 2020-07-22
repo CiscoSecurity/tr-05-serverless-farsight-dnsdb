@@ -40,7 +40,8 @@ def test_map(input_data, aggregate):
         data = json.load(file)
 
         results = getattr(input_data.mapping, 'extract_sightings')(
-            data['input'], 100, aggregate=aggregate)
+            data['input'], 'source_uri', 100, aggregate=aggregate
+        )
 
         time = datetime.now().isoformat(timespec="minutes")
         for record in results:
@@ -58,7 +59,8 @@ def test_limit(input_data):
 
         for limit in (0, 1, 2, 25, 100):
             results = getattr(input_data.mapping, 'extract_sightings')(
-                data['input'], limit, aggregate=False)
+                data['input'], 'source_uri', limit, aggregate=False
+            )
 
             assert len(results) <= limit
 

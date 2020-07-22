@@ -121,14 +121,14 @@ def farsight_response_not_found(secret_key):
     )
 
 
-def expected_payload(r, body):
+def expected_payload(r, observe_body, refer_body=None):
     if r.endswith('/deliberate/observables'):
         return {'data': {}}
 
-    if r.endswith('/refer/observables'):
-        return {'data': []}
+    if r.endswith('/refer/observables') and refer_body is not None:
+        return refer_body
 
-    return body
+    return observe_body
 
 
 @fixture(scope='module')
@@ -145,20 +145,27 @@ def unauthorized_creds_body():
 
 
 @fixture(scope='module')
-def unauthorized_creds_expected_payload(route, unauthorized_creds_body):
-    return expected_payload(route, unauthorized_creds_body)
+def unauthorized_creds_expected_payload(
+        route, unauthorized_creds_body, success_enrich_refer_body
+):
+    return expected_payload(
+        route, unauthorized_creds_body, success_enrich_refer_body
+    )
 
 
 @fixture(scope='module')
-def invalid_jwt_expected_payload(route):
-    return expected_payload(route, {
-        'errors': [
-            {'code': PERMISSION_DENIED,
-             'message': 'Invalid Authorization Bearer JWT.',
-             'type': 'fatal'}
-        ],
-        'data': {}
-    })
+def invalid_jwt_expected_payload(route, success_enrich_refer_body):
+    return expected_payload(
+        route, {
+            'errors': [
+                {'code': PERMISSION_DENIED,
+                 'message': 'Invalid Authorization Bearer JWT.',
+                 'type': 'fatal'}
+            ],
+            'data': {}
+        },
+        success_enrich_refer_body
+    )
 
 
 @fixture(scope='module')
@@ -181,7 +188,8 @@ def success_enrich_body():
         'data':
             {'sightings': {'count': 1, 'docs': [
                 {'confidence': 'High', 'count': 4,
-                 "description": 'IP addresses that google.com resolves to',
+                 'description': 'IP addresses that google.com resolves to',
+                 'source_uri': 'https://scout.dnsdb.info/?seed=google.com',
                  'internal': False, 'observables': [
                     {'type': 'domain', 'value': 'google.com'}],
                  'relations': [
@@ -200,5 +208,39 @@ def success_enrich_body():
 
 
 @fixture(scope='module')
-def success_enrich_expected_payload(route, success_enrich_body):
-    return expected_payload(route, success_enrich_body)
+def success_enrich_refer_body():
+    return {
+        'data': [
+            {
+                'categories': ['Search', 'Farsight DNSDB'],
+                'description': 'Lookup this domain on Farsight DNSDB',
+                'id': 'ref-farsight-dnsdb-search-domain-google.com',
+                'title': 'Search for this domain',
+                'url': 'https://scout.dnsdb.info/?seed=google.com',
+            }
+        ]
+    }
+
+
+@fixture(scope='module')
+def key_error_body():
+    return {
+        'errors': [
+            {
+                'type': 'fatal',
+                'code': 'key error',
+                'message': 'The data structure of Farsight DNSDB '
+                           'has changed. The module is broken.'
+            }
+        ],
+        'data': {}
+    }
+
+
+@fixture(scope='module')
+def success_enrich_expected_payload(
+        route, success_enrich_body, success_enrich_refer_body
+):
+    return expected_payload(
+        route, success_enrich_body, success_enrich_refer_body
+    )
