@@ -302,3 +302,5 @@ to CTIM `Sighting` which can be switched between with an environment variable `A
     linked as `Sighting` observed relations.
     - The sum of values from the resolution `count` is used as a `Sighting.count`.
     - The time of investigation is used as a `Sighting.observed_time.start_time`.
+
+**NOTE.** If there are too many results, timeout or other performance issues may occur.
