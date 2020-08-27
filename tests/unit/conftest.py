@@ -167,6 +167,7 @@ def sslerror_expected_payload():
         ]
     }
 
+
 @fixture(scope='module')
 def invalid_jwt_expected_payload(route, success_enrich_refer_body):
     return expected_payload(
