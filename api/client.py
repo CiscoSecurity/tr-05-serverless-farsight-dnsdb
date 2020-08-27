@@ -3,10 +3,12 @@ from datetime import datetime, timedelta
 from http import HTTPStatus
 
 import requests
+from requests.exceptions import SSLError
 
 from api.errors import (
     UnsupportedObservableTypeError,
-    UnexpectedFarsightResponseError
+    CriticalFarsightResponseError,
+    FarsightSSLError
 )
 from api.utils import join_url
 
@@ -56,7 +58,10 @@ class FarsightClient:
             f'&limit={limit}' if limit else '',
             time_filter
         )
-        response = requests.get(url, headers=self.headers)
+        try:
+            response = requests.get(url, headers=self.headers)
+        except SSLError as error:
+            raise FarsightSSLError(error)
 
         if response.ok:
             return [json.loads(raw) for raw in response.iter_lines()]
@@ -64,7 +69,7 @@ class FarsightClient:
         if response.status_code in NOT_CRITICAL_ERRORS:
             return []
 
-        raise UnexpectedFarsightResponseError(response)
+        raise CriticalFarsightResponseError(response)
 
     def lookup(self, observable, number_of_days_to_filter=None, limit=None):
         return self._request_farsight(
