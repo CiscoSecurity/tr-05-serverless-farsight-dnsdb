@@ -46,7 +46,17 @@ class UnsupportedObservableTypeError(InvalidArgumentError):
         )
 
 
-class UnexpectedFarsightResponseError(TRFormattedError):
+class FarsightSSLError(TRFormattedError):
+    def __init__(self, error):
+        error = error.args[0].reason.args[0]
+        message = getattr(error, 'verify_message', error.args[0]).capitalize()
+        super().__init__(
+            UNKNOWN,
+            f'Unable to verify SSL certificate: {message}'
+        )
+
+
+class CriticalFarsightResponseError(TRFormattedError):
     def __init__(self, response):
         """
         https://api.dnsdb.info/#response-codes
