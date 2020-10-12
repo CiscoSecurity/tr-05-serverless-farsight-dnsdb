@@ -241,6 +241,14 @@ header set to `Bearer <JWT>`.
   - Maps the fetched data into appropriate CTIM entities.
   - Returns a list per each of the following CTIM entities (if any extracted):
     - `Sighting`.
+    
+- `POST /refer/observables`
+  - Accepts a list of observables and filters out unsupported ones.
+  - Builds a search link per each supported observable to pivot back to the
+  underlying external service and look up the observable there.
+  - Builds a browse link per each supported observable to pivot back
+   directly to the observable page if there is one.
+  - Returns a list of those links.
 
 ### Supported Types of Observables
 
