@@ -17,17 +17,6 @@ def route(request):
     return request.param
 
 
-def test_enrich_call_with_invalid_jwt_failure(
-        route, client, invalid_jwt, valid_json,  invalid_jwt_expected_payload
-):
-    response = client.post(
-        route, headers=headers(invalid_jwt), json=valid_json
-    )
-
-    assert response.status_code == HTTPStatus.OK
-    assert response.json == invalid_jwt_expected_payload
-
-
 @fixture(scope='module')
 def invalid_json():
     return [{'type': 'domain'}]
@@ -42,26 +31,6 @@ def test_enrich_call_with_valid_jwt_but_invalid_json_failure(
 
     assert response.status_code == HTTPStatus.OK
     assert response.json == invalid_json_expected_payload
-
-
-@fixture(scope='module')
-def valid_json():
-    return [{'type': 'domain', 'value': 'google.com'}]
-
-
-def test_enrich_call_with_unauthorized_creds_failure(
-        route, client, valid_jwt, valid_json,
-        farsight_response_unauthorized_creds,
-        unauthorized_creds_expected_payload,
-):
-    with patch('requests.get') as get_mock:
-        get_mock.return_value = farsight_response_unauthorized_creds
-        response = client.post(
-            route, headers=headers(valid_jwt), json=valid_json
-        )
-
-        assert response.status_code == HTTPStatus.OK
-        assert response.json == unauthorized_creds_expected_payload
 
 
 def test_enrich_call_success(

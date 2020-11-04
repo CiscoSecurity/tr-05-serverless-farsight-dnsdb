@@ -6,8 +6,8 @@ from unittest.mock import MagicMock
 from authlib.jose import jwt
 from pytest import fixture
 
-from api.errors import PERMISSION_DENIED, INVALID_ARGUMENT, UNKNOWN
 from app import app
+from api.errors import INVALID_ARGUMENT, UNKNOWN, AUTH_ERROR
 
 
 @fixture(scope='session')
@@ -59,33 +59,16 @@ def farsight_api_error_mock(status_code, text=None):
 def valid_jwt(client):
     header = {'alg': 'HS256'}
 
-    payload = {'username': 'gdavoian', 'superuser': False}
+    payload = {'key': 'some_key'}
 
     secret_key = client.application.secret_key
 
     return jwt.encode(header, payload, secret_key).decode('ascii')
 
 
-@fixture(scope='session')
-def invalid_jwt(valid_jwt):
-    header, payload, signature = valid_jwt.split('.')
-
-    def jwt_decode(s: str) -> dict:
-        from authlib.common.encoding import urlsafe_b64decode, json_loads
-        return json_loads(urlsafe_b64decode(s.encode('ascii')))
-
-    def jwt_encode(d: dict) -> str:
-        from authlib.common.encoding import json_dumps, urlsafe_b64encode
-        return urlsafe_b64encode(json_dumps(d).encode('ascii')).decode('ascii')
-
-    payload = jwt_decode(payload)
-
-    # Corrupt the valid JWT by tampering with its payload.
-    payload['superuser'] = True
-
-    payload = jwt_encode(payload)
-
-    return '.'.join([header, payload, signature])
+@fixture(scope='module')
+def valid_json():
+    return [{'type': 'domain', 'value': 'google.com'}]
 
 
 @fixture(scope='function')
@@ -135,22 +118,13 @@ def expected_payload(r, observe_body, refer_body=None):
 def unauthorized_creds_body():
     return {
         'errors': [
-            {'code': PERMISSION_DENIED,
-             'message': ("Unexpected response from Farsight DNSDB: "
+            {'code': AUTH_ERROR,
+             'message': ("Authorization failed: "
                          "Error: Bad API key"),
              'type': 'fatal'}
         ],
         'data': {}
     }
-
-
-@fixture(scope='module')
-def unauthorized_creds_expected_payload(
-        route, unauthorized_creds_body, success_enrich_refer_body
-):
-    return expected_payload(
-        route, unauthorized_creds_body, success_enrich_refer_body
-    )
 
 
 @fixture(scope='module')
@@ -166,21 +140,6 @@ def sslerror_expected_payload():
             }
         ]
     }
-
-
-@fixture(scope='module')
-def invalid_jwt_expected_payload(route, success_enrich_refer_body):
-    return expected_payload(
-        route, {
-            'errors': [
-                {'code': PERMISSION_DENIED,
-                 'message': 'Invalid Authorization Bearer JWT.',
-                 'type': 'fatal'}
-            ],
-            'data': {}
-        },
-        success_enrich_refer_body
-    )
 
 
 @fixture(scope='module')
