@@ -16,39 +16,6 @@ def route(request):
     return request.param
 
 
-def test_health_call_without_jwt_failure(
-        route, client, invalid_jwt_expected_payload
-):
-    response = client.post(route)
-
-    assert response.status_code == HTTPStatus.OK
-    assert response.json == invalid_jwt_expected_payload
-
-
-def test_health_call_with_invalid_jwt_failure(
-        route, client, invalid_jwt, invalid_jwt_expected_payload
-):
-    response = client.post(route, headers=headers(invalid_jwt))
-
-    assert response.status_code == HTTPStatus.OK
-    assert response.json == invalid_jwt_expected_payload
-
-
-def test_health_call_with_unauthorized_creds_failure(
-        route, client, valid_jwt,
-        farsight_response_unauthorized_creds,
-        unauthorized_creds_expected_payload,
-):
-    with patch('requests.get') as get_mock:
-        get_mock.return_value = farsight_response_unauthorized_creds
-        response = client.post(
-            route, headers=headers(valid_jwt)
-        )
-
-        assert response.status_code == HTTPStatus.OK
-        assert response.json == unauthorized_creds_expected_payload
-
-
 def test_health_call_with_ssl_error_failure(
         route, client, valid_jwt,
         sslerror_expected_payload,

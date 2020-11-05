@@ -8,7 +8,8 @@ from requests.exceptions import SSLError
 from api.errors import (
     UnsupportedObservableTypeError,
     CriticalFarsightResponseError,
-    FarsightSSLError
+    FarsightSSLError,
+    AuthorizationError
 )
 from api.utils import join_url
 
@@ -62,6 +63,9 @@ class FarsightClient:
             response = requests.get(url, headers=self.headers)
         except SSLError as error:
             raise FarsightSSLError(error)
+
+        if response.status_code == HTTPStatus.FORBIDDEN:
+            raise AuthorizationError(response.text)
 
         if response.ok:
             return [json.loads(raw) for raw in response.iter_lines()]
