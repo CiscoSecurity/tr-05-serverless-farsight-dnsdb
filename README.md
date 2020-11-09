@@ -250,6 +250,9 @@ header set to `Bearer <JWT>`.
    directly to the observable page if there is one.
   - Returns a list of those links.
 
+- `POST /version`
+  - Returns the current version of the application.
+
 ### Supported Types of Observables
 
 - `ip`
