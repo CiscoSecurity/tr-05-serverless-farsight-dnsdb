@@ -1,24 +1,21 @@
+import jwt
 import json
-from datetime import datetime
-from http import HTTPStatus
-from unittest.mock import MagicMock
-
-from authlib.jose import jwt
-from pytest import fixture
 
 from app import app
+from pytest import fixture
+from http import HTTPStatus
+from unittest.mock import MagicMock, patch
 from api.errors import INVALID_ARGUMENT, UNKNOWN, AUTH_ERROR
+from tests.unit.mock_for_tests import (
+    PRIVATE_KEY,
+    EXPECTED_RESPONSE_OF_JWKS_ENDPOINT,
+    RESPONSE_OF_JWKS_ENDPOINT_WITH_WRONG_KEY
+)
 
 
 @fixture(scope='session')
-def secret_key():
-    # Generate some string based on the current datetime.
-    return datetime.utcnow().isoformat()
-
-
-@fixture(scope='session')
-def client(secret_key):
-    app.secret_key = secret_key
+def client():
+    app.rsa_private_key = PRIVATE_KEY
 
     app.testing = True
 
@@ -56,19 +53,68 @@ def farsight_api_error_mock(status_code, text=None):
 
 
 @fixture(scope='session')
+def get_public_key():
+    mock_response = MagicMock()
+    payload = EXPECTED_RESPONSE_OF_JWKS_ENDPOINT
+
+    mock_response.json = lambda: payload
+    return mock_response
+
+
+@fixture(scope='session')
+def get_wrong_public_key():
+    mock_response = MagicMock()
+    payload = RESPONSE_OF_JWKS_ENDPOINT_WITH_WRONG_KEY
+    mock_response.json = lambda: payload
+    return mock_response
+
+
+@fixture(scope='session')
 def valid_jwt(client):
-    header = {'alg': 'HS256'}
+    def _make_jwt(
+            key='some_key',
+            jwks_host='visibility.amp.cisco.com',
+            aud='http://localhost',
+            kid='02B1174234C29F8EFB69911438F597FF3FFEE6B7',
+            aggregate=True,
+            ctr_entities_limit=0,
+            wrong_structure=False
+    ):
+        payload = {
+            'key': key,
+            'jwks_host': jwks_host,
+            'aud': aud,
+            'AGGREGATE': aggregate,
+            'CTR_ENTITIES_LIMIT': ctr_entities_limit
+        }
 
-    payload = {'key': 'some_key'}
+        if wrong_structure:
+            payload.pop('key')
 
-    secret_key = client.application.secret_key
+        return jwt.encode(
+            payload, client.application.rsa_private_key, algorithm='RS256',
+            headers={
+                'kid': kid
+            }
+        )
 
-    return jwt.encode(header, payload, secret_key).decode('ascii')
+    return _make_jwt
+
+
+@fixture(scope='function')
+def mock_request():
+    with patch('requests.get') as mock_request:
+        yield mock_request
 
 
 @fixture(scope='module')
 def valid_json():
     return [{'type': 'domain', 'value': 'google.com'}]
+
+
+@fixture(scope='module')
+def invalid_json():
+    return [{'type': 'domain'}]
 
 
 @fixture(scope='function')
@@ -89,18 +135,18 @@ def farsight_response_ok():
 
 
 @fixture(scope='session')
-def farsight_response_unauthorized_creds(secret_key):
+def farsight_response_not_found():
     return farsight_api_error_mock(
-        HTTPStatus.FORBIDDEN,
-        'Error: Bad API key'
+        HTTPStatus.NOT_FOUND,
+        'Error: Not Found'
     )
 
 
 @fixture(scope='session')
-def farsight_response_not_found(secret_key):
+def farsight_response_unauthorized_creds():
     return farsight_api_error_mock(
-        HTTPStatus.NOT_FOUND,
-        'Error: Not Found'
+        HTTPStatus.FORBIDDEN,
+        'Error: Bad API key'
     )
 
 
@@ -218,3 +264,23 @@ def success_enrich_expected_payload(
     return expected_payload(
         route, success_enrich_body, success_enrich_refer_body
     )
+
+
+@fixture(scope='module')
+def authorization_errors_expected_payload(route):
+    def _make_payload_message(message):
+        payload = {
+            'data': {},
+            'errors':
+                [
+                    {
+                        'code': AUTH_ERROR,
+                        'message': f'Authorization failed: {message}',
+                        'type': 'fatal'
+                    }
+                ]
+
+        }
+        return payload
+
+    return _make_payload_message

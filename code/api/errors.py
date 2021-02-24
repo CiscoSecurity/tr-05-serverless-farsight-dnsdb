@@ -77,3 +77,11 @@ class CriticalFarsightResponseError(TRFormattedError):
             status_code_map.get(response.status_code),
             f'Unexpected response from Farsight DNSDB: {response.text}'
         )
+
+
+class WatchdogError(TRFormattedError):
+    def __init__(self):
+        super().__init__(
+            code='health check failed',
+            message='Invalid Health Check'
+        )
