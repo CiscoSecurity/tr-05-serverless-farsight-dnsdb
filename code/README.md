@@ -130,7 +130,7 @@ old `URL` forever.
 ## Step 3: Testing (Optional)
 
 If you want to test the application you have to install a couple of extra
-dependencies from the [test-requirements.txt](test-requirements.txt) file:
+dependencies from the [requirements.txt](requirements.txt) file:
 ```
 pip install --upgrade --requirement requirements.txt
 ```
@@ -138,7 +138,7 @@ pip install --upgrade --requirement requirements.txt
 You can perform two kinds of testing:
 
 - Run static code analysis checking for any semantic discrepancies and
-[PEP 8](https://www.python.org/dev/peps/pep-0008/) compliance:
+[PEP 8] (https://www.python.org/dev/peps/pep-0008/) compliance:
 
   `flake8 .`
 
