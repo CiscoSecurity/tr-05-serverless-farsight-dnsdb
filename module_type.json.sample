@@ -32,7 +32,7 @@
     {
       "key": "custom_AGGREGATE",
       "type": "boolean",
-      "label": "Entities Limit",
+      "label": "Aggregate",
       "tooltip": "Switches on the `Aggregated Mode`",
       "required": false
     }
