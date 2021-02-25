@@ -30,7 +30,9 @@ def set_ctr_entities_limit(payload):
         assert ctr_entities_limit > 0
     except (KeyError, ValueError, AssertionError):
         ctr_entities_limit = current_app.config['CTR_ENTITIES_LIMIT_DEFAULT']
-    current_app.config['CTR_ENTITIES_LIMIT'] = ctr_entities_limit
+    current_app.config['CTR_ENTITIES_LIMIT'] = ctr_entities_limit \
+        if ctr_entities_limit < current_app.config['CTR_ENTITIES_LIMIT_MAX'] \
+        else current_app.config['CTR_ENTITIES_LIMIT_MAX']
 
 
 def set_aggregate(payload):

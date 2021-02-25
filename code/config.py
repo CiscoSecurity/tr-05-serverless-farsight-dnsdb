@@ -17,13 +17,7 @@ class Config:
     USER_AGENT = ('SecureX Threat Response Integrations '
                   '<tr-integrations-support@cisco.com>')
 
+    AGGREGATE_DEFAULT = True
     CTR_ENTITIES_LIMIT_MAX = 1000
     CTR_ENTITIES_LIMIT_DEFAULT = 100
     NUMBER_OF_DAYS_FOR_FARSIGHT_TIME_FILTER = 90
-
-    CTR_ENTITIES_LIMIT = CTR_ENTITIES_LIMIT_DEFAULT
-
-    if CTR_ENTITIES_LIMIT > CTR_ENTITIES_LIMIT_MAX:
-        CTR_ENTITIES_LIMIT = CTR_ENTITIES_LIMIT_MAX
-
-    AGGREGATE_DEFAULT = True
