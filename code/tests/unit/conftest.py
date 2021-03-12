@@ -168,15 +168,13 @@ def unauthorized_creds_body():
              'message': ("Authorization failed: "
                          "Error: Bad API key"),
              'type': 'fatal'}
-        ],
-        'data': {}
+        ]
     }
 
 
 @fixture(scope='module')
 def sslerror_expected_payload():
     return {
-        'data': {},
         'errors': [
             {
                 'code': UNKNOWN,
@@ -192,13 +190,17 @@ def sslerror_expected_payload():
 def invalid_json_expected_payload(route):
     return expected_payload(
         route,
-        {'errors': [
-            {'code': INVALID_ARGUMENT,
-             'message':
-                 'Invalid JSON payload received. '
-                 '{"0": {"value": ["Missing data for required field."]}}',
-             'type': 'fatal'}],
-            'data': {}}
+        {
+            'errors': [
+                {
+                    'code': INVALID_ARGUMENT,
+                    'message':
+                    'Invalid JSON payload received. '
+                    '{"0": {"value": ["Missing data for required field."]}}',
+                    'type': 'fatal'
+                }
+            ]
+        }
     )
 
 
@@ -252,8 +254,7 @@ def key_error_body():
                 'message': 'The data structure of Farsight DNSDB '
                            'has changed. The module is broken.'
             }
-        ],
-        'data': {}
+        ]
     }
 
 
@@ -270,7 +271,6 @@ def success_enrich_expected_payload(
 def authorization_errors_expected_payload(route):
     def _make_payload_message(message):
         payload = {
-            'data': {},
             'errors':
                 [
                     {
