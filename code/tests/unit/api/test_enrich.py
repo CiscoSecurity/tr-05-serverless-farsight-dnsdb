@@ -17,16 +17,14 @@ def route(request):
     return request.param
 
 
-@fixture(scope='module')
-def invalid_json():
-    return [{'type': 'domain'}]
-
-
 def test_enrich_call_with_valid_jwt_but_invalid_json_failure(
         route, client, valid_jwt, invalid_json, invalid_json_expected_payload,
+        mock_request, get_public_key
 ):
+    mock_request.return_value = get_public_key
+
     response = client.post(
-        route, headers=headers(valid_jwt), json=invalid_json
+        route, headers=headers(valid_jwt()), json=invalid_json
     )
 
     assert response.status_code == HTTPStatus.OK
@@ -35,13 +33,17 @@ def test_enrich_call_with_valid_jwt_but_invalid_json_failure(
 
 def test_enrich_call_success(
         route, client, valid_jwt, valid_json,
-        farsight_response_ok, success_enrich_expected_payload
+        farsight_response_ok, success_enrich_expected_payload,
+        get_public_key
 ):
     with patch('requests.get') as get_mock:
-        get_mock.return_value = farsight_response_ok
+        get_mock.side_effect = (
+            get_public_key,
+            farsight_response_ok
+        )
 
         response = client.post(
-            route, headers=headers(valid_jwt), json=valid_json
+            route, headers=headers(valid_jwt()), json=valid_json
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -59,13 +61,17 @@ def test_enrich_call_success(
 
 def test_enrich_success_with_not_found(
         client, valid_jwt, valid_json,
-        farsight_response_not_found
+        farsight_response_not_found, get_public_key
 ):
     with patch('requests.get') as get_mock:
-        get_mock.return_value = farsight_response_not_found
+        get_mock.side_effect = (
+            get_public_key,
+            farsight_response_not_found
+        )
 
         response = client.post(
-            '/observe/observables', headers=headers(valid_jwt), json=valid_json
+            '/observe/observables',
+            headers=headers(valid_jwt()), json=valid_json
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -82,14 +88,16 @@ def valid_json_multiple():
 def test_enrich_call_success_with_extended_error_handling(
         client, valid_jwt, valid_json_multiple, farsight_response_ok,
         farsight_response_unauthorized_creds, farsight_response_not_found,
-        success_enrich_body, unauthorized_creds_body
+        success_enrich_body, unauthorized_creds_body, get_public_key
 ):
     with patch('requests.get') as get_mock:
-        get_mock.side_effect = [farsight_response_ok,
-                                farsight_response_not_found,
-                                farsight_response_unauthorized_creds]
+        get_mock.side_effect = [
+            get_public_key,
+            farsight_response_ok,
+            farsight_response_not_found,
+            farsight_response_unauthorized_creds]
         response = client.post(
-            '/observe/observables', headers=headers(valid_jwt),
+            '/observe/observables', headers=headers(valid_jwt()),
             json=valid_json_multiple
         )
 
@@ -102,19 +110,3 @@ def test_enrich_call_success_with_extended_error_handling(
 
         assert response['data'] == success_enrich_body['data']
         assert response['errors'] == unauthorized_creds_body['errors']
-
-
-def test_enrich_call_with_key_error(
-        client, valid_jwt, valid_json, key_error_body
-):
-    with patch('api.enrich.FarsightClient.lookup') as get_mock, \
-            patch('api.enrich.Mapping.extract_sightings') as extract_mock:
-        get_mock.side_effect = [[{'some_key': 'some_value'}]]
-        extract_mock.side_effect = [KeyError('foo')]
-
-        response = client.post(
-            '/observe/observables', headers=headers(valid_jwt), json=valid_json
-        )
-
-        assert response.status_code == HTTPStatus.OK
-        assert response.json == key_error_body
