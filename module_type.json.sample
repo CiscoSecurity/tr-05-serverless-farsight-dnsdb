@@ -6,10 +6,6 @@
   "tips": "When configuring this integration, you must first gather some information from your Farsight Security DNSDB® account, then add the Farsight Security DNSDB® Module\n\n1. Locate your **DNSDB API key**, it may be found in an email from Farsight Security\n2. Complete the **Add New Farsight Security DNSDB® Module** form:\n    - **Module Name** - Leave the default name or enter a name that is meaningful to you.\n    - **API Key** - Enter the API Key from your Farsight Security DNSDB® account information.\n    - **Entities Limit** - Enter the limit that restricts the maximum number of CTIM entities of each type returned in a single response per each requested observable. Must be a positive integer. Defaults to 100 (if unset or incorrect).\n    - **Aggregate** - Turn on/off the aggregate mode.Default is True (if unset or incorrect)\n\n3. Click **Save** to complete the Farsight Security DNSDB® module configuration",
   "external_references": [
     {
-      "label": "Free Trial",
-      "link": "https://www.farsightsecurity.com/trial-api/"
-    },
-    {
       "label": "Contact Farsight",
       "link": "https://www.farsightsecurity.com/about-farsight-security/contacts/"
     }
