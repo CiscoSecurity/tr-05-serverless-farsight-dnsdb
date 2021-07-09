@@ -78,7 +78,8 @@ def valid_jwt(client):
             kid='02B1174234C29F8EFB69911438F597FF3FFEE6B7',
             aggregate=True,
             ctr_entities_limit=0,
-            wrong_structure=False
+            wrong_structure=False,
+            wrong_jwks_host=False,
     ):
         payload = {
             'key': key,
@@ -87,6 +88,9 @@ def valid_jwt(client):
             'AGGREGATE': aggregate,
             'CTR_ENTITIES_LIMIT': ctr_entities_limit
         }
+
+        if wrong_jwks_host:
+            payload.pop('jwks_host')
 
         if wrong_structure:
             payload.pop('key')
