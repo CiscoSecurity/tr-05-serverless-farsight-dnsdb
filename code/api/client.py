@@ -67,7 +67,7 @@ class FarsightClient:
             raise AuthorizationError
 
         if response.status_code == HTTPStatus.FORBIDDEN:
-            raise AuthorizationError(response.text)
+            raise AuthorizationError
 
         if response.ok:
             return [json.loads(raw) for raw in response.iter_lines()]
