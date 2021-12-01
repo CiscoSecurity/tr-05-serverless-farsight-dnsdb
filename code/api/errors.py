@@ -8,6 +8,7 @@ UNAUTHORIZED = 'unauthorized'
 NOT_FOUND = 'not found'
 UNAVAILABLE = 'unavailable'
 AUTH_ERROR = 'authorization error'
+BAD_API_KEY = 'Error: Bad API key'
 
 
 class TRFormattedError(Exception):
@@ -25,7 +26,7 @@ class TRFormattedError(Exception):
 
 
 class AuthorizationError(TRFormattedError):
-    def __init__(self, message):
+    def __init__(self, message=BAD_API_KEY):
         super().__init__(
             AUTH_ERROR,
             f'Authorization failed: {message}'

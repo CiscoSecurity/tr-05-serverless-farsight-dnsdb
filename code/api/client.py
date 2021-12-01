@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from http import HTTPStatus
 
 import requests
-from requests.exceptions import SSLError
+from requests.exceptions import SSLError, InvalidHeader
 
 from api.errors import (
     UnsupportedObservableTypeError,
@@ -63,6 +63,8 @@ class FarsightClient:
             response = requests.get(url, headers=self.headers)
         except SSLError as error:
             raise FarsightSSLError(error)
+        except (UnicodeEncodeError, InvalidHeader):
+            raise AuthorizationError
 
         if response.status_code == HTTPStatus.FORBIDDEN:
             raise AuthorizationError(response.text)
